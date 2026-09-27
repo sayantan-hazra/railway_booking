@@ -87,13 +87,22 @@ railway-booking/
 	```
 
 4. Create the project database in phpMyAdmin.
-5. Import the project's SQL database file when available.
+6. Import `config/schema.sql` to create the tables and a local demonstration admin account.
 6. Update the database credentials in `config/db.php` to match your local MySQL setup.
 7. Open the application in a browser:
 
 	```text
 	http://localhost/railway-booking/
 	```
+
+### Admin demonstration login
+
+Open `http://localhost/railway-booking/admin/login.php` after importing the schema:
+
+- Username: `admin`
+- Password: `Admin@123`
+
+Change or remove this local demonstration account before deploying outside XAMPP.
 
 ## Application Workflow
 
