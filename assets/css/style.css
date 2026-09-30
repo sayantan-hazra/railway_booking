@@ -2122,3 +2122,846 @@ textarea:focus {
         gap: 0.75rem;
     }
 }
+/* rupankar  */
+/* =====================================================
+   MEMBER 5 - PROFILE
+===================================================== */
+
+.profile-page,
+.wallet-page {
+
+    background: #F8FAFC;
+
+    min-height: 80vh;
+
+    padding: 45px 20px;
+
+}
+
+
+.profile-container,
+.wallet-container {
+
+    max-width: 1100px;
+
+    margin: 0 auto;
+
+}
+
+
+.profile-page-heading,
+.wallet-page-heading {
+
+    margin-bottom: 25px;
+
+}
+
+
+.profile-eyebrow,
+.wallet-eyebrow {
+
+    color: #2563EB;
+
+    font-size: 13px;
+
+    font-weight: 700;
+
+    letter-spacing: 1px;
+
+    margin-bottom: 7px;
+
+}
+
+
+.profile-page-heading h1,
+.wallet-page-heading h1 {
+
+    color: #0F172A;
+
+    font-size: 32px;
+
+    margin-bottom: 7px;
+
+}
+
+
+.profile-page-heading p:last-child,
+.wallet-page-heading p:last-child {
+
+    color: #64748B;
+
+}
+
+
+/* =====================================================
+   PROFILE CARD
+===================================================== */
+
+.profile-main-card {
+
+    background: #FFFFFF;
+
+    border: 1px solid #E2E8F0;
+
+    border-radius: 16px;
+
+    padding: 30px;
+
+}
+
+
+.profile-user-header {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 18px;
+
+    padding-bottom: 25px;
+
+    border-bottom: 1px solid #E2E8F0;
+
+}
+
+
+.profile-avatar {
+
+    width: 72px;
+
+    height: 72px;
+
+    border-radius: 50%;
+
+    background: #DBEAFE;
+
+    color: #2563EB;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 25px;
+
+    font-weight: 700;
+
+}
+
+
+.profile-user-header h2 {
+
+    color: #0F172A;
+
+    margin-bottom: 5px;
+
+}
+
+
+.profile-user-header p {
+
+    color: #64748B;
+
+}
+
+
+/* =====================================================
+   PROFILE INFORMATION
+===================================================== */
+
+.profile-information {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, 1fr);
+
+    gap: 16px;
+
+    margin-top: 25px;
+
+}
+
+
+.profile-info-item {
+
+    border: 1px solid #E2E8F0;
+
+    border-radius: 10px;
+
+    padding: 17px;
+
+}
+
+
+.profile-info-item span {
+
+    display: block;
+
+    color: #64748B;
+
+    font-size: 13px;
+
+    margin-bottom: 7px;
+
+}
+
+
+.profile-info-item strong {
+
+    color: #0F172A;
+
+}
+
+
+.wallet-info strong {
+
+    color: #16A34A;
+
+}
+
+
+/* =====================================================
+   PROFILE BUTTONS
+===================================================== */
+
+.profile-buttons {
+
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 12px;
+
+    margin-top: 28px;
+
+}
+
+
+.profile-primary-btn,
+.profile-secondary-btn,
+.profile-danger-btn {
+
+    border: none;
+
+    border-radius: 8px;
+
+    padding: 11px 18px;
+
+    text-decoration: none;
+
+    cursor: pointer;
+
+    font-size: 14px;
+
+    display: inline-block;
+
+}
+
+
+.profile-primary-btn {
+
+    background: #2563EB;
+
+    color: #FFFFFF;
+
+}
+
+
+.profile-primary-btn:hover {
+
+    background: #1D4ED8;
+
+}
+
+
+.profile-secondary-btn {
+
+    background: #DBEAFE;
+
+    color: #2563EB;
+
+}
+
+
+.profile-secondary-btn:hover {
+
+    background: #bfdbfe;
+
+}
+
+
+.profile-danger-btn {
+
+    background: #FEE2E2;
+
+    color: #DC2626;
+
+}
+
+
+/* =====================================================
+   PROFILE WALLET QUICK CARD
+===================================================== */
+
+.profile-wallet-card {
+
+    margin-top: 20px;
+
+    background: #1E3A8A;
+
+    color: #FFFFFF;
+
+    border-radius: 16px;
+
+    padding: 25px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+}
+
+
+.profile-wallet-card p {
+
+    opacity: .8;
+
+    margin-bottom: 5px;
+
+}
+
+
+.profile-wallet-card h2 {
+
+    font-size: 30px;
+
+}
+
+
+.profile-wallet-card a {
+
+    color: #1E3A8A;
+
+    background: #DBEAFE;
+
+    padding: 11px 17px;
+
+    border-radius: 8px;
+
+    text-decoration: none;
+
+    font-weight: 600;
+
+}
+
+
+/* =====================================================
+   PROFILE MODAL
+===================================================== */
+
+.profile-modal {
+
+    display: none;
+
+    position: fixed;
+
+    inset: 0;
+
+    background: rgba(15, 23, 42, .55);
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 20px;
+
+    z-index: 9999;
+
+}
+
+
+.profile-modal-box {
+
+    background: #FFFFFF;
+
+    width: 100%;
+
+    max-width: 450px;
+
+    border-radius: 14px;
+
+    padding: 25px;
+
+}
+
+
+.modal-header {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    margin-bottom: 20px;
+
+}
+
+
+.modal-header button {
+
+    border: none;
+
+    background: transparent;
+
+    font-size: 28px;
+
+    cursor: pointer;
+
+    color: #64748B;
+
+}
+
+
+.profile-modal-box label {
+
+    display: block;
+
+    margin-top: 15px;
+
+    margin-bottom: 7px;
+
+    color: #0F172A;
+
+    font-weight: 600;
+
+}
+
+
+.profile-modal-box input {
+
+    width: 100%;
+
+    padding: 12px;
+
+    border: 1px solid #E2E8F0;
+
+    border-radius: 7px;
+
+    outline: none;
+
+}
+
+
+.profile-modal-box input:focus {
+
+    border-color: #2563EB;
+
+}
+
+
+.profile-modal-box .profile-primary-btn {
+
+    margin-top: 20px;
+
+    width: 100%;
+
+}
+
+
+/* =====================================================
+   WALLET BALANCE
+===================================================== */
+
+.wallet-balance-card {
+
+    background: #1E3A8A;
+
+    color: #FFFFFF;
+
+    border-radius: 16px;
+
+    padding: 30px;
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    margin-bottom: 20px;
+
+}
+
+
+.wallet-balance-card span {
+
+    opacity: .8;
+
+}
+
+
+.wallet-balance-card h2 {
+
+    font-size: 40px;
+
+    margin-top: 8px;
+
+}
+
+
+.wallet-balance-icon {
+
+    width: 65px;
+
+    height: 65px;
+
+    border-radius: 50%;
+
+    background: #DBEAFE;
+
+    color: #2563EB;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 28px;
+
+    font-weight: bold;
+
+}
+
+
+/* =====================================================
+   WALLET CARD
+===================================================== */
+
+.wallet-card {
+
+    background: #FFFFFF;
+
+    border: 1px solid #E2E8F0;
+
+    border-radius: 16px;
+
+    padding: 25px;
+
+    margin-bottom: 20px;
+
+}
+
+
+.wallet-card-heading {
+
+    margin-bottom: 20px;
+
+}
+
+
+.wallet-card-heading h2 {
+
+    color: #0F172A;
+
+    margin-bottom: 5px;
+
+}
+
+
+.wallet-card-heading p {
+
+    color: #64748B;
+
+}
+
+
+/* =====================================================
+   WALLET AMOUNT BUTTONS
+===================================================== */
+
+.wallet-amount-form {
+
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 12px;
+
+}
+
+
+.wallet-amount-btn {
+
+    border: 1px solid #bfdbfe;
+
+    background: #DBEAFE;
+
+    color: #2563EB;
+
+    border-radius: 8px;
+
+    padding: 12px 22px;
+
+    cursor: pointer;
+
+    font-weight: 600;
+
+}
+
+
+.wallet-amount-btn:hover {
+
+    background: #2563EB;
+
+    color: #FFFFFF;
+
+}
+
+
+/* =====================================================
+   CUSTOM AMOUNT
+===================================================== */
+
+.wallet-custom-form {
+
+    display: flex;
+
+    gap: 10px;
+
+    margin-top: 15px;
+
+}
+
+
+.wallet-custom-form input {
+
+    flex: 1;
+
+    padding: 12px;
+
+    border: 1px solid #E2E8F0;
+
+    border-radius: 8px;
+
+    outline: none;
+
+}
+
+
+.wallet-custom-form input:focus {
+
+    border-color: #2563EB;
+
+}
+
+
+.wallet-add-btn {
+
+    background: #2563EB;
+
+    color: #FFFFFF;
+
+    border: none;
+
+    border-radius: 8px;
+
+    padding: 12px 20px;
+
+    cursor: pointer;
+
+}
+
+
+.wallet-add-btn:hover {
+
+    background: #1D4ED8;
+
+}
+
+
+/* =====================================================
+   TRANSACTION TABLE
+===================================================== */
+
+.wallet-table-wrapper {
+
+    overflow-x: auto;
+
+}
+
+
+.wallet-table {
+
+    width: 100%;
+
+    border-collapse: collapse;
+
+}
+
+
+.wallet-table th {
+
+    background: #DBEAFE;
+
+    color: #1E3A8A;
+
+    text-align: left;
+
+    padding: 14px;
+
+}
+
+
+.wallet-table td {
+
+    padding: 14px;
+
+    border-bottom: 1px solid #E2E8F0;
+
+    color: #0F172A;
+
+}
+
+
+.wallet-credit {
+
+    color: #16A34A;
+
+    font-weight: 700;
+
+}
+
+
+.wallet-debit {
+
+    color: #DC2626;
+
+    font-weight: 700;
+
+}
+
+
+.wallet-empty {
+
+    text-align: center;
+
+    padding: 30px !important;
+
+    color: #64748B !important;
+
+}
+
+
+/* =====================================================
+   WALLET INFO
+===================================================== */
+
+.wallet-info-box {
+
+    background: #DBEAFE;
+
+    border: 1px solid #bfdbfe;
+
+    border-radius: 12px;
+
+    padding: 18px;
+
+    color: #1E3A8A;
+
+}
+
+
+.wallet-info-box p {
+
+    margin-top: 5px;
+
+    color: #64748B;
+
+}
+
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media (max-width: 700px) {
+
+
+    .profile-page,
+    .wallet-page {
+
+        padding: 30px 15px;
+
+    }
+
+
+    .profile-information {
+
+        grid-template-columns: 1fr;
+
+    }
+
+
+    .profile-buttons {
+
+        flex-direction: column;
+
+    }
+
+
+    .profile-primary-btn,
+    .profile-secondary-btn,
+    .profile-danger-btn {
+
+        width: 100%;
+
+        text-align: center;
+
+    }
+
+
+    .profile-wallet-card {
+
+        flex-direction: column;
+
+        align-items: flex-start;
+
+        gap: 18px;
+
+    }
+
+
+    .wallet-balance-card {
+
+        padding: 22px;
+
+    }
+
+
+    .wallet-balance-card h2 {
+
+        font-size: 30px;
+
+    }
+
+
+    .wallet-custom-form {
+
+        flex-direction: column;
+
+    }
+
+
+    .wallet-custom-form button {
+
+        width: 100%;
+
+    }
+
+}
