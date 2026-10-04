@@ -3,7 +3,67 @@
 // Phase 1: Static homepage UI
 // Database and booking logic will be integrated later.
 
+session_start();
+require_once __DIR__ . '/../config/db.php';
+
 $pageTitle = "Home";
+$userId = (int) ($_SESSION['user_id'] ?? 0);
+$upcomingBooking = null;
+$latestBooking = null;
+
+if ($userId > 0) {
+    $upcomingStatement = $conn->prepare(
+        "SELECT b.booking_id, b.pnr, b.travel_date, b.total_amount, b.status,
+                t.train_number, t.train_name,
+                fs.station_name AS from_station, ts.station_name AS to_station,
+                c.coach_number
+         FROM bookings b
+         INNER JOIN trains t ON t.train_id = b.train_id
+         INNER JOIN stations fs ON fs.station_id = b.from_station_id
+         INNER JOIN stations ts ON ts.station_id = b.to_station_id
+         LEFT JOIN coaches c ON c.coach_id = b.coach_id
+         WHERE b.user_id = ? AND b.status = 'CONFIRMED' AND b.travel_date >= CURDATE()
+         ORDER BY b.travel_date ASC, b.booked_at DESC
+         LIMIT 1"
+    );
+    $upcomingStatement->bind_param('i', $userId);
+    $upcomingStatement->execute();
+    $upcomingBooking = $upcomingStatement->get_result()->fetch_assoc();
+    $upcomingStatement->close();
+
+    $latestStatement = $conn->prepare(
+        "SELECT b.booking_id, b.pnr, b.travel_date, b.total_amount, b.status,
+                t.train_number, t.train_name,
+                fs.station_name AS from_station, ts.station_name AS to_station,
+                c.coach_number
+         FROM bookings b
+         INNER JOIN trains t ON t.train_id = b.train_id
+         INNER JOIN stations fs ON fs.station_id = b.from_station_id
+         INNER JOIN stations ts ON ts.station_id = b.to_station_id
+         LEFT JOIN coaches c ON c.coach_id = b.coach_id
+         WHERE b.user_id = ?
+         ORDER BY b.booked_at DESC, b.booking_id DESC
+         LIMIT 1"
+    );
+    $latestStatement->bind_param('i', $userId);
+    $latestStatement->execute();
+    $latestBooking = $latestStatement->get_result()->fetch_assoc();
+    $latestStatement->close();
+}
+
+$homeBooking = $upcomingBooking ?: $latestBooking;
+$stations = [];
+$stationResult = $conn->query(
+    "SELECT station_code, station_name, city
+     FROM stations
+     ORDER BY station_name"
+);
+
+if ($stationResult) {
+    while ($station = $stationResult->fetch_assoc()) {
+        $stations[] = $station;
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -57,6 +117,11 @@ $pageTitle = "Home";
                 <a href="support.php" class="header-action">
                     <span class="action-icon">?</span>
                     <span class="action-text">Support</span>
+                </a>
+
+                <a href="../auth/logout.php" class="header-action">
+                    <span class="action-icon">&#8594;</span>
+                    <span class="action-text">Logout</span>
                 </a>
 
             </div>
@@ -128,19 +193,14 @@ $pageTitle = "Home";
                         </label>
 
                         <div class="input-wrapper">
-
-                            <span class="input-icon">
-                                🚉
-                            </span>
-
-                            <input
-                                type="text"
-                                id="from"
-                                name="from"
-                                placeholder="Departure station"
-                                autocomplete="off"
-                                required
-                            >
+                            <select id="from" name="from" required>
+                                <option value="" selected disabled>Select departure station</option>
+                                <?php foreach ($stations as $station): ?>
+                                    <option value="<?= htmlspecialchars($station['station_code']) ?>">
+                                        <?= htmlspecialchars($station['station_name'] . ' (' . $station['station_code'] . ')') ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
 
                         </div>
 
@@ -167,19 +227,14 @@ $pageTitle = "Home";
                         </label>
 
                         <div class="input-wrapper">
-
-                            <span class="input-icon">
-                                📍
-                            </span>
-
-                            <input
-                                type="text"
-                                id="to"
-                                name="to"
-                                placeholder="Destination station"
-                                autocomplete="off"
-                                required
-                            >
+                            <select id="to" name="to" required>
+                                <option value="" selected disabled>Select destination station</option>
+                                <?php foreach ($stations as $station): ?>
+                                    <option value="<?= htmlspecialchars($station['station_code']) ?>">
+                                        <?= htmlspecialchars($station['station_name'] . ' (' . $station['station_code'] . ')') ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
 
                         </div>
 
@@ -270,9 +325,7 @@ $pageTitle = "Home";
                 <div>
                     <p class="eyebrow">Your Trips</p>
 
-                    <h2>
-                        Upcoming Journey
-                    </h2>
+                    <h2><?= $upcomingBooking ? 'Upcoming Journey' : 'Latest Booking' ?></h2>
                 </div>
 
                 <a
@@ -285,26 +338,37 @@ $pageTitle = "Home";
             </div>
 
 
-            <!-- Empty state for now -->
-            <!-- Later this will come from the database -->
-
-            <div class="upcoming-card empty-upcoming">
-
-                <div class="empty-icon">
-                    🚆
+            <?php if ($homeBooking): ?>
+                <article class="booking-card home-booking-card">
+                    <div class="home-booking-heading">
+                        <p class="eyebrow"><?= $homeBooking['status'] === 'CONFIRMED' ? 'Confirmed trip' : 'Most recent booking' ?></p>
+                        <h3><?= htmlspecialchars($homeBooking['train_name']) ?></h3>
+                        <span>Train <?= htmlspecialchars($homeBooking['train_number']) ?> · PNR <?= htmlspecialchars($homeBooking['pnr']) ?></span>
+                    </div>
+                    <div class="home-booking-route">
+                        <strong><?= htmlspecialchars($homeBooking['from_station']) ?></strong>
+                        <span aria-hidden="true">→</span>
+                        <strong><?= htmlspecialchars($homeBooking['to_station']) ?></strong>
+                    </div>
+                    <div class="home-booking-meta">
+                        <span>Date <strong><?= htmlspecialchars($homeBooking['travel_date']) ?></strong></span>
+                        <span>Coach <strong><?= htmlspecialchars($homeBooking['coach_number'] ?? '-') ?></strong></span>
+                        <span>Amount <strong>₹<?= number_format((float) $homeBooking['total_amount'], 2) ?></strong></span>
+                    </div>
+                    <div class="home-booking-actions">
+                        <span class="badge <?= $homeBooking['status'] === 'CONFIRMED' ? 'badge-green' : 'badge-red' ?>"><?= htmlspecialchars($homeBooking['status']) ?></span>
+                        <a class="button button-muted" href="view_ticket.php?id=<?= (int) $homeBooking['booking_id'] ?>">View ticket</a>
+                    </div>
+                </article>
+            <?php else: ?>
+                <div class="upcoming-card empty-upcoming">
+                    <div class="empty-icon">🚆</div>
+                    <div>
+                        <h3>No booked journeys</h3>
+                        <p>Your booked trains will appear here.</p>
+                    </div>
                 </div>
-
-                <div>
-                    <h3>
-                        No upcoming journeys
-                    </h3>
-
-                    <p>
-                        Your confirmed bookings will appear here.
-                    </p>
-                </div>
-
-            </div>
+            <?php endif; ?>
 
         </section>
 

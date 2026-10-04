@@ -13,23 +13,48 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 	$train_id = (int) ($_POST['train_id'] ?? 0);
 	$coach_type = trim($_POST['coach_type'] ?? '');
 	$coach_number = trim($_POST['coach_number'] ?? '');
+	$seat_price = (float) ($_POST['seat_price'] ?? 0);
 
 	if ($action === 'delete') {
-		$statement = $conn->prepare('DELETE FROM coaches WHERE coach_id = ?');
-		$statement->bind_param('i', $coach_id);
+		$usageStatement = $conn->prepare(
+			'SELECT COUNT(*) AS total
+			 FROM bookings b
+			 LEFT JOIN seats s ON s.seat_id = b.seat_id
+			 WHERE b.coach_id = ? OR s.coach_id = ?'
+		);
+		$usageStatement->bind_param('ii', $coach_id, $coach_id);
+		$usageStatement->execute();
+		$usageCount = (int) $usageStatement->get_result()->fetch_assoc()['total'];
+		$usageStatement->close();
 
-		if ($statement->execute()) {
-			$message = 'Coach deleted successfully.';
+		if ($usageCount > 0) {
+			$error = 'This coach cannot be deleted because it is referenced by a booking.';
 		} else {
-			$error = 'This coach cannot be deleted because it is being used by another record.';
+			try {
+				$conn->begin_transaction();
+				$seatStatement = $conn->prepare('DELETE FROM seats WHERE coach_id = ?');
+				$seatStatement->bind_param('i', $coach_id);
+				$seatStatement->execute();
+				$seatStatement->close();
+
+				$coachStatement = $conn->prepare('DELETE FROM coaches WHERE coach_id = ?');
+				$coachStatement->bind_param('i', $coach_id);
+				$coachStatement->execute();
+				$coachStatement->close();
+				$conn->commit();
+				$message = 'Coach deleted successfully.';
+			} catch (mysqli_sql_exception $exception) {
+				$conn->rollback();
+				$error = 'This coach could not be deleted because it is still in use.';
+			}
 		}
 	} elseif ($train_id <= 0 || $coach_type === '' || $coach_number === '') {
-		$error = 'Train, coach type, and coach number are required.';
+		$error = 'Train, coach type, coach number, and a valid seat price are required.';
 	} elseif ($action === 'update') {
 		$statement = $conn->prepare(
-			'UPDATE coaches SET train_id = ?, coach_type = ?, coach_number = ? WHERE coach_id = ?'
+			'UPDATE coaches SET train_id = ?, coach_type = ?, coach_number = ?, seat_price = ? WHERE coach_id = ?'
 		);
-		$statement->bind_param('issi', $train_id, $coach_type, $coach_number, $coach_id);
+		$statement->bind_param('issdi', $train_id, $coach_type, $coach_number, $seat_price, $coach_id);
 
 		if ($statement->execute()) {
 			$message = 'Coach updated successfully.';
@@ -38,9 +63,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 		}
 	} else {
 		$statement = $conn->prepare(
-			'INSERT INTO coaches (train_id, coach_type, coach_number) VALUES (?, ?, ?)'
+			'INSERT INTO coaches (train_id, coach_type, coach_number, seat_price) VALUES (?, ?, ?, ?)'
 		);
-		$statement->bind_param('iss', $train_id, $coach_type, $coach_number);
+		$statement->bind_param('issd', $train_id, $coach_type, $coach_number, $seat_price);
 
 		if ($statement->execute()) {
 			$message = 'Coach added successfully.';
@@ -53,7 +78,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 if (isset($_GET['edit'])) {
 	$coach_id = (int) $_GET['edit'];
 	$statement = $conn->prepare(
-		'SELECT coach_id, train_id, coach_type, coach_number FROM coaches WHERE coach_id = ?'
+		'SELECT coach_id, train_id, coach_type, coach_number, seat_price FROM coaches WHERE coach_id = ?'
 	);
 	$statement->bind_param('i', $coach_id);
 	$statement->execute();
@@ -63,7 +88,7 @@ if (isset($_GET['edit'])) {
 $trains = admin_query($conn, 'SELECT train_id, train_number, train_name FROM trains ORDER BY train_number');
 $coaches = admin_query(
 	$conn,
-	'SELECT c.coach_id, c.coach_type, c.coach_number, t.train_number, t.train_name
+	'SELECT c.coach_id, c.coach_type, c.coach_number, c.seat_price, t.train_number, t.train_name
 	 FROM coaches c
 	 INNER JOIN trains t ON t.train_id = c.train_id
 	 ORDER BY t.train_number, c.coach_number'
@@ -102,11 +127,20 @@ admin_header('Coaches', 'coaches');
 				</div>
 				<div>
 					<label for="coach_type">Coach type</label>
-					<input id="coach_type" name="coach_type" value="<?= htmlspecialchars($editing['coach_type'] ?? '') ?>" placeholder="e.g. 3A, SL, CC" required>
+					<select id="coach_type" name="coach_type" required>
+						<option value="">Select coach type</option>
+						<?php foreach (['2S', 'SL', '3A', '2A'] as $coachType): ?>
+							<option value="<?= $coachType ?>" <?= ($editing['coach_type'] ?? '') === $coachType ? 'selected' : '' ?>><?= $coachType ?></option>
+						<?php endforeach; ?>
+					</select>
 				</div>
 				<div>
 					<label for="coach_number">Coach number</label>
 					<input id="coach_number" name="coach_number" value="<?= htmlspecialchars($editing['coach_number'] ?? '') ?>" placeholder="e.g. B1 or S1" required>
+				</div>
+				<div>
+					<label for="seat_price">Seat price</label>
+					<input id="seat_price" name="seat_price" type="number" min="0" step="0.01" value="<?= htmlspecialchars($editing['seat_price'] ?? '500') ?>" required>
 				</div>
 			</div>
 
@@ -133,13 +167,14 @@ admin_header('Coaches', 'coaches');
 	<?php if ($coaches && $coaches->num_rows > 0): ?>
 		<div class="table-wrap">
 			<table class="data-table">
-				<thead><tr><th>Train</th><th>Coach number</th><th>Type</th><th>Actions</th></tr></thead>
+				<thead><tr><th>Train</th><th>Coach number</th><th>Type</th><th>Seat price</th><th>Actions</th></tr></thead>
 				<tbody>
 					<?php while ($coach = $coaches->fetch_assoc()): ?>
 						<tr>
 							<td><strong><?= htmlspecialchars($coach['train_number']) ?></strong><br><span class="muted"><?= htmlspecialchars($coach['train_name']) ?></span></td>
 							<td><span class="badge badge-blue"><?= htmlspecialchars($coach['coach_number']) ?></span></td>
 							<td><?= htmlspecialchars($coach['coach_type']) ?></td>
+							<td>₹<?= number_format((float) $coach['seat_price'], 2) ?></td>
 							<td>
 								<div class="action-links">
 									<a href="?edit=<?= (int) $coach['coach_id'] ?>">Edit</a>

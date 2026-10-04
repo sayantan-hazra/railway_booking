@@ -3,6 +3,8 @@
 
 session_start();
 
+$isAdmin = ($_SESSION['role'] ?? '') === 'ADMIN';
+
 $_SESSION = [];
 
 if (ini_get("session.use_cookies")) {
@@ -22,6 +24,6 @@ if (ini_get("session.use_cookies")) {
 
 session_destroy();
 
-header("Location: login.php");
+header('Location: ' . ($isAdmin ? '../admin/login.php' : '../index.php'));
 
 exit;

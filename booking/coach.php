@@ -5,6 +5,7 @@
  */
 
 require_once __DIR__ . '/../config/db.php';
+require_once __DIR__ . '/../includes/auth_check.php';
 
 $pageTitle = "Select Coach";
 
@@ -29,9 +30,25 @@ if (!$train) {
     die("Train not found in database for ID: " . htmlspecialchars($trainId));
 }
 
+$routeStatement = $conn->prepare(
+    'SELECT fs.city AS from_city, ts.city AS to_city
+     FROM train_stops fstop
+     INNER JOIN stations fs ON fs.station_id = fstop.station_id AND fs.station_code = ?
+     INNER JOIN train_stops tstop ON tstop.train_id = fstop.train_id
+     INNER JOIN stations ts ON ts.station_id = tstop.station_id AND ts.station_code = ?
+     WHERE fstop.train_id = ? AND fstop.stop_order < tstop.stop_order
+     LIMIT 1'
+);
+$routeStatement->bind_param('ssi', $from, $to, $trainId);
+$routeStatement->execute();
+$route = $routeStatement->get_result()->fetch_assoc();
+$routeStatement->close();
+$fromCity = $route['from_city'] ?? $from;
+$toCity = $route['to_city'] ?? $to;
+
 // Fetch coaches for this train
 $coachesStmt = $conn->prepare("
-    SELECT coach_id, coach_number, coach_type
+    SELECT coach_id, coach_number, coach_type, seat_price
     FROM coaches
     WHERE train_id = ?
     ORDER BY coach_number ASC
@@ -91,6 +108,10 @@ function getCoachDetails($type) {
                     <span class="action-icon">?</span>
                     <span class="action-text">Support</span>
                 </a>
+                <a href="../auth/logout.php" class="header-action">
+                    <span class="action-icon">&#8594;</span>
+                    <span class="action-text">Logout</span>
+                </a>
             </div>
         </div>
     </header>
@@ -109,7 +130,10 @@ function getCoachDetails($type) {
             <div class="train-summary-col">
                 <span class="summary-label">ROUTE & DATE</span>
                 <h3 class="summary-title date-highlight">
-                    <?php echo htmlspecialchars($from); ?> ➔ <?php echo htmlspecialchars($to); ?> (<?php echo htmlspecialchars($journeyDate); ?>)
+                    <span class="coach-route-city"><?php echo htmlspecialchars($fromCity); ?></span>
+                    <span aria-hidden="true">➔</span>
+                    <span class="coach-route-city"><?php echo htmlspecialchars($toCity); ?></span>
+                    <span class="coach-route-date">(<?php echo htmlspecialchars($journeyDate); ?>)</span>
                 </h3>
             </div>
         </div>
@@ -122,6 +146,7 @@ function getCoachDetails($type) {
                 <?php foreach ($coachesList as $coach): ?>
                     <?php
                         $info = getCoachDetails($coach['coach_type']);
+                        $info['price'] = '₹' . number_format((float) $coach['seat_price'], 2);
                         $badgeClass = $info['is_ac'] ? 'ac-tag' : 'non-ac-tag';
                     ?>
                     <div class="train-card-item" style="display: flex; flex-direction: column; justify-content: space-between; margin-bottom: 0;">

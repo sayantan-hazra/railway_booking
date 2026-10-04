@@ -5,6 +5,7 @@
  */
 
 require_once __DIR__ . '/../config/db.php';
+require_once __DIR__ . '/../includes/auth_check.php';
 
 $pageTitle = "Search Trains";
 
@@ -18,6 +19,8 @@ $searchSubmitted = $from !== "" && $to !== "" && $journeyDate !== "";
 
 $trainResults = [];
 $searchError = "";
+$stationResult = $conn->query('SELECT station_code, station_name, city FROM stations ORDER BY station_name');
+$stationOptions = $stationResult ? $stationResult->fetch_all(MYSQLI_ASSOC) : [];
 
 // Database search logic
 if ($searchSubmitted) {
@@ -25,40 +28,55 @@ if ($searchSubmitted) {
                 t.train_id,
                 t.train_number,
                 t.train_name,
-                TIME_FORMAT(s1.departure_time, '%h:%i %p') AS departure,
-                TIME_FORMAT(s2.arrival_time, '%h:%i %p') AS arrival,
-                TIMEDIFF(s2.arrival_time, s1.departure_time) AS duration_raw
+                st1.station_name AS from_station,
+                st1.city AS from_city,
+                st2.station_name AS to_station,
+                st2.city AS to_city,
+                s1.departure_time,
+                s2.arrival_time,
+                                MIN(c.seat_price) AS starting_fare
             FROM trains t
             JOIN train_stops s1 ON t.train_id = s1.train_id
             JOIN stations st1 ON s1.station_id = st1.station_id
             JOIN train_stops s2 ON t.train_id = s2.train_id
             JOIN stations st2 ON s2.station_id = st2.station_id
-            WHERE (st1.station_name LIKE ? OR st1.station_code LIKE ? OR st1.city LIKE ?)
-              AND (st2.station_name LIKE ? OR st2.station_code LIKE ? OR st2.city LIKE ?)
-              AND s1.stop_order < s2.stop_order";
+                        LEFT JOIN coaches c ON c.train_id = t.train_id
+                        WHERE st1.station_code = ?
+                            AND st2.station_code = ?
+                            AND s1.stop_order < s2.stop_order
+                        GROUP BY t.train_id, t.train_number, t.train_name, st1.station_name, st2.station_name,
+                     s1.departure_time, s2.arrival_time, s1.stop_order, s2.stop_order";
 
     if ($stmt = $conn->prepare($sql)) {
-        $fromParam = "%$from%";
-        $toParam = "%$to%";
-        $stmt->bind_param("ssssss", $fromParam, $fromParam, $fromParam, $toParam, $toParam, $toParam);
+        $stmt->bind_param("ss", $from, $to);
         $stmt->execute();
         $result = $stmt->get_result();
 
         while ($row = $result->fetch_assoc()) {
-            $durationFormatted = "N/A";
-            if (!empty($row['duration_raw'])) {
-                $parts = explode(':', $row['duration_raw']);
-                $durationFormatted = (int)$parts[0] . 'h ' . (int)$parts[1] . 'm';
+            $durationFormatted = 'N/A';
+            $departureDateTime = DateTime::createFromFormat('H:i:s', $row['departure_time'] ?? '');
+            $arrivalDateTime = DateTime::createFromFormat('H:i:s', $row['arrival_time'] ?? '');
+            if ($departureDateTime && $arrivalDateTime) {
+                if ($arrivalDateTime < $departureDateTime) {
+                    $arrivalDateTime->modify('+1 day');
+                }
+                $duration = $departureDateTime->diff($arrivalDateTime);
+                $durationFormatted = ($duration->h + ($duration->days * 24)) . 'h ' . $duration->i . 'm';
             }
+
+            $departureDisplay = $row['departure_time'] ? date('h:i A', strtotime($row['departure_time'])) : 'N/A';
+            $arrivalDisplay = $row['arrival_time'] ? date('h:i A', strtotime($row['arrival_time'])) : 'N/A';
 
             $trainResults[] = [
                 "train_id"  => $row["train_id"],
                 "number"    => $row["train_number"],
                 "name"      => $row["train_name"],
-                "departure" => $row["departure"] ?? "N/A",
-                "arrival"   => $row["arrival"] ?? "N/A",
+                "departure" => $departureDisplay,
+                "arrival"   => $arrivalDisplay,
+                "from_city" => $row["from_city"] ?? $row["from_station"],
+                "to_city"   => $row["to_city"] ?? $row["to_station"],
                 "duration"  => $durationFormatted,
-                "fare"      => "₹500"
+                "fare"      => "₹" . number_format((float) $row["starting_fare"], 2)
             ];
         }
         $stmt->close();
@@ -101,6 +119,10 @@ if ($searchSubmitted) {
                     <span class="action-icon">?</span>
                     <span class="action-text">Support</span>
                 </a>
+                <a href="../auth/logout.php" class="header-action">
+                    <span class="action-icon">&#8594;</span>
+                    <span class="action-text">Logout</span>
+                </a>
             </div>
         </div>
     </header>
@@ -141,12 +163,26 @@ if ($searchSubmitted) {
                     
                     <div class="field-group">
                         <label for="from">From</label>
-                        <input type="text" id="from" name="from" value="<?php echo htmlspecialchars($from); ?>" placeholder="e.g. Howrah or HWH" required>
+                        <select id="from" name="from" required>
+                            <option value="">Select departure station</option>
+                            <?php foreach ($stationOptions as $station): ?>
+                                <option value="<?= htmlspecialchars($station['station_code']) ?>" <?= $from === $station['station_code'] ? 'selected' : '' ?>>
+                                    <?= htmlspecialchars($station['station_name'] . ' (' . $station['station_code'] . ')') ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
                     </div>
 
                     <div class="field-group">
                         <label for="to">To</label>
-                        <input type="text" id="to" name="to" value="<?php echo htmlspecialchars($to); ?>" placeholder="e.g. New Delhi or NDLS" required>
+                        <select id="to" name="to" required>
+                            <option value="">Select destination station</option>
+                            <?php foreach ($stationOptions as $station): ?>
+                                <option value="<?= htmlspecialchars($station['station_code']) ?>" <?= $to === $station['station_code'] ? 'selected' : '' ?>>
+                                    <?= htmlspecialchars($station['station_name'] . ' (' . $station['station_code'] . ')') ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
                     </div>
 
                     <div class="field-group">
@@ -185,6 +221,7 @@ if ($searchSubmitted) {
 
                             <div class="train-details">
                                 <div class="train-time">
+                                    <span class="train-city"><?php echo htmlspecialchars($train["from_city"]); ?></span>
                                     <strong><?php echo htmlspecialchars($train["departure"]); ?></strong>
                                     <span>Departure</span>
                                 </div>
@@ -195,6 +232,7 @@ if ($searchSubmitted) {
                                 </div>
 
                                 <div class="train-time">
+                                    <span class="train-city"><?php echo htmlspecialchars($train["to_city"]); ?></span>
                                     <strong><?php echo htmlspecialchars($train["arrival"]); ?></strong>
                                     <span>Arrival</span>
                                 </div>

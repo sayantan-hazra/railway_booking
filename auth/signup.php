@@ -129,79 +129,93 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
 </head>
 
-<body>
+<body class="auth-page">
 
-<div class="auth-container">
+<main class="auth-card">
 
-    <div class="auth-card">
+        <a class="brand" href="../index.php">
+            <span class="brand-mark">R</span>
+            <span>RailEase</span>
+        </a>
 
-        <h1>Create Account</h1>
-
-        <p>Register your RailEase account</p>
+        <p class="eyebrow">Passenger account</p>
+        <h1>Create account</h1>
+        <p class="muted">Register your RailEase account.</p>
 
         <?php if (!empty($message)): ?>
 
-            <div class="error-message">
+            <div class="alert alert-error">
                 <?php echo htmlspecialchars($message); ?>
             </div>
 
         <?php endif; ?>
 
-        <form method="POST">
+        <form method="POST" class="stack-form">
 
-            <label>Full Name</label>
+            <label for="full_name">Full name</label>
 
             <input
+                id="full_name"
                 type="text"
                 name="full_name"
                 required
             >
 
-            <label>Username</label>
+            <label for="username">Username</label>
 
             <input
+                id="username"
                 type="text"
                 name="username"
+                autocomplete="username"
                 required
             >
 
-            <label>Email</label>
+            <label for="email">Email</label>
 
             <input
+                id="email"
                 type="email"
                 name="email"
+                autocomplete="email"
                 required
             >
 
-            <label>Phone Number</label>
+            <label for="phone">Phone number</label>
 
             <input
+                id="phone"
                 type="tel"
                 name="phone"
                 pattern="[0-9]{10}"
                 maxlength="10"
+                autocomplete="tel"
                 required
             >
 
-            <label>Password</label>
+            <label for="password">Password</label>
 
             <input
+                id="password"
                 type="password"
                 name="password"
                 minlength="8"
+                autocomplete="new-password"
                 required
             >
 
-            <label>Confirm Password</label>
+            <label for="confirm_password">Confirm password</label>
 
             <input
+                id="confirm_password"
                 type="password"
                 name="confirm_password"
                 minlength="8"
+                autocomplete="new-password"
                 required
             >
 
-            <button type="submit">
+            <button class="button button-primary" type="submit">
                 Create Account
             </button>
 
@@ -209,12 +223,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         <p>
             Already have an account?
-            <a href="login.php">Login</a>
+            <a class="back-link" href="login.php">Login</a>
         </p>
 
-    </div>
-
-</div>
+</main>
 
 </body>
 </html>

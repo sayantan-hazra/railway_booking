@@ -41,6 +41,7 @@ CREATE TABLE IF NOT EXISTS coaches (
     train_id INT UNSIGNED NOT NULL,
     coach_type VARCHAR(20) NOT NULL,
     coach_number VARCHAR(20) NOT NULL,
+    seat_price DECIMAL(10, 2) NOT NULL DEFAULT 500,
     FOREIGN KEY (train_id) REFERENCES trains(train_id) ON DELETE CASCADE
 );
 
@@ -56,6 +57,14 @@ CREATE TABLE IF NOT EXISTS meals (
     meal_id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     meal_name VARCHAR(80) NOT NULL,
     price DECIMAL(10, 2) NOT NULL DEFAULT 0
+);
+
+CREATE TABLE IF NOT EXISTS train_meals (
+    train_id INT UNSIGNED NOT NULL,
+    meal_id INT UNSIGNED NOT NULL,
+    PRIMARY KEY (train_id, meal_id),
+    FOREIGN KEY (train_id) REFERENCES trains(train_id) ON DELETE CASCADE,
+    FOREIGN KEY (meal_id) REFERENCES meals(meal_id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS bookings (
@@ -80,6 +89,19 @@ CREATE TABLE IF NOT EXISTS bookings (
     FOREIGN KEY (to_station_id) REFERENCES stations(station_id),
     FOREIGN KEY (coach_id) REFERENCES coaches(coach_id) ON DELETE SET NULL,
     FOREIGN KEY (seat_id) REFERENCES seats(seat_id) ON DELETE SET NULL,
+    FOREIGN KEY (meal_id) REFERENCES meals(meal_id) ON DELETE SET NULL
+);
+
+CREATE TABLE IF NOT EXISTS booking_passengers (
+    passenger_id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    booking_id INT UNSIGNED NOT NULL,
+    seat_id INT UNSIGNED NOT NULL,
+    meal_id INT UNSIGNED NULL,
+    passenger_name VARCHAR(120) NOT NULL,
+    age TINYINT UNSIGNED NOT NULL,
+    gender VARCHAR(20) NOT NULL,
+    FOREIGN KEY (booking_id) REFERENCES bookings(booking_id) ON DELETE CASCADE,
+    FOREIGN KEY (seat_id) REFERENCES seats(seat_id),
     FOREIGN KEY (meal_id) REFERENCES meals(meal_id) ON DELETE SET NULL
 );
 
@@ -112,6 +134,7 @@ CREATE TABLE IF NOT EXISTS support_tickets (
     status ENUM('OPEN', 'IN_PROGRESS', 'RESOLVED') NOT NULL DEFAULT 'OPEN',
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     resolved_at TIMESTAMP NULL,
+    UNIQUE KEY unique_user_support_subject (user_id, subject),
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
     FOREIGN KEY (booking_id) REFERENCES bookings(booking_id) ON DELETE SET NULL
 );

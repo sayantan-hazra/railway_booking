@@ -5,6 +5,7 @@
  */
 
 require_once __DIR__ . '/../config/db.php';
+require_once __DIR__ . '/../includes/auth_check.php';
 
 $pageTitle = "Available Trains";
 
@@ -16,6 +17,9 @@ if (empty($from) || empty($to)) {
     header("Location: search.php");
     exit;
 }
+
+header('Location: search.php?from=' . urlencode($from) . '&to=' . urlencode($to) . '&journey_date=' . urlencode($journeyDate));
+exit;
 
 // Fetch corresponding trains from database
 $stmt = $conn->prepare("

@@ -15,12 +15,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $city = trim($_POST['city'] ?? '');
 
     if ($action === 'delete') {
-        $statement = $conn->prepare('DELETE FROM stations WHERE station_id = ?');
-        $statement->bind_param('i', $station_id);
-        if ($statement->execute()) {
-            $message = 'Station deleted successfully.';
+        $usageStatement = $conn->prepare(
+            'SELECT
+                (SELECT COUNT(*) FROM train_stops WHERE station_id = ?) +
+                (SELECT COUNT(*) FROM bookings WHERE from_station_id = ? OR to_station_id = ?) AS total'
+        );
+        $usageStatement->bind_param('iii', $station_id, $station_id, $station_id);
+        $usageStatement->execute();
+        $usageCount = (int) $usageStatement->get_result()->fetch_assoc()['total'];
+        $usageStatement->close();
+
+        if ($usageCount > 0) {
+            $error = 'This station cannot be deleted because it is used by a train route or booking.';
         } else {
-            $error = 'This station is being used by a train route or booking and cannot be deleted.';
+            try {
+                $statement = $conn->prepare('DELETE FROM stations WHERE station_id = ?');
+                $statement->bind_param('i', $station_id);
+                $statement->execute();
+                $statement->close();
+                $message = 'Station deleted successfully.';
+            } catch (mysqli_sql_exception $exception) {
+                $error = 'This station cannot be deleted because it is still in use.';
+            }
         }
     } elseif ($station_code === '' || $station_name === '' || $city === '') {
         $error = 'Station code, station name, and city are required.';

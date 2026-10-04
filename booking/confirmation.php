@@ -6,120 +6,178 @@
 
 session_start();
 require_once __DIR__ . '/../config/db.php';
+require_once __DIR__ . '/../includes/auth_check.php';
 
 $pageTitle = "Boarding Pass - RailEase";
+$userId = (int) $_SESSION['user_id'];
 
-// Handle form submit from checkout.php
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['seat_ids'])) {
-    $userId       = isset($_SESSION['user_id']) ? (int)$_SESSION['user_id'] : 1;
-    $trainId      = (int)$_POST['train_id'];
-    $coachId      = (int)$_POST['coach_id'];
-    $journeyDate  = trim($_POST['journey_date']);
-    $totalFare    = (float)$_POST['total_fare'];
-    $contactEmail = trim($_POST['contact_email']);
-    $contactPhone = trim($_POST['contact_phone']);
-    $fromCity     = isset($_POST['from']) ? trim($_POST['from']) : 'HOWRAH';
-    $toCity       = isset($_POST['to']) ? trim($_POST['to']) : 'NEW DELHI';
-    $passengers   = isset($_POST['passengers']) ? $_POST['passengers'] : [];
-
-    // Unique Indian Railway Style PNR
-    $pnr = 'RE' . mt_rand(10000000, 99999999);
-
-    $conn->begin_transaction();
-    try {
-        $colRes = $conn->query("SHOW COLUMNS FROM bookings");
-        $existingCols = [];
-        while ($colRow = $colRes->fetch_assoc()) {
-            $existingCols[] = $colRow['Field'];
-        }
-
-        $dataToInsert = [];
-        if (in_array('user_id', $existingCols))       $dataToInsert['user_id'] = $userId;
-        if (in_array('train_id', $existingCols))      $dataToInsert['train_id'] = $trainId;
-        if (in_array('coach_id', $existingCols))      $dataToInsert['coach_id'] = $coachId;
-        if (in_array('pnr', $existingCols))           $dataToInsert['pnr'] = $pnr;
-        
-        if (in_array('from_station_id', $existingCols)) $dataToInsert['from_station_id'] = 1;
-        if (in_array('to_station_id', $existingCols))   $dataToInsert['to_station_id'] = 2;
-
-        if (in_array('journey_date', $existingCols))     $dataToInsert['journey_date'] = $journeyDate;
-        elseif (in_array('booking_date', $existingCols)) $dataToInsert['booking_date'] = $journeyDate;
-        elseif (in_array('travel_date', $existingCols))  $dataToInsert['travel_date'] = $journeyDate;
-
-        if (in_array('total_fare', $existingCols))       $dataToInsert['total_fare'] = $totalFare;
-        elseif (in_array('fare', $existingCols))         $dataToInsert['fare'] = $totalFare;
-        elseif (in_array('total_amount', $existingCols)) $dataToInsert['total_amount'] = $totalFare;
-        elseif (in_array('amount', $existingCols))       $dataToInsert['amount'] = $totalFare;
-
-        if (in_array('contact_email', $existingCols))    $dataToInsert['contact_email'] = $contactEmail;
-        if (in_array('contact_phone', $existingCols))    $dataToInsert['contact_phone'] = $contactPhone;
-        if (in_array('booking_status', $existingCols))   $dataToInsert['booking_status'] = 'Confirmed';
-        elseif (in_array('status', $existingCols))       $dataToInsert['status'] = 'Confirmed';
-
-        $colNames = implode(', ', array_keys($dataToInsert));
-        $placeholders = implode(', ', array_fill(0, count($dataToInsert), '?'));
-        
-        $types = '';
-        $values = array_values($dataToInsert);
-        foreach ($values as $val) {
-            if (is_int($val)) $types .= 'i';
-            elseif (is_float($val)) $types .= 'd';
-            else $types .= 's';
-        }
-
-        $bStmt = $conn->prepare("INSERT INTO bookings ($colNames) VALUES ($placeholders)");
-        $bStmt->bind_param($types, ...$values);
-        $bStmt->execute();
-        $bookingId = $conn->insert_id;
-        $bStmt->close();
-
-        // Passengers
-        $pStmt = $conn->prepare("
-            INSERT INTO passengers (booking_id, seat_id, passenger_name, age, gender) 
-            VALUES (?, ?, ?, ?, ?)
-        ");
-        foreach ($passengers as $p) {
-            $seatId = (int)$p['seat_id'];
-            $pName  = trim($p['name']);
-            $pAge   = (int)$p['age'];
-            $pGen   = trim($p['gender']);
-            $pStmt->bind_param("iisis", $bookingId, $seatId, $pName, $pAge, $pGen);
-            $pStmt->execute();
-        }
-        $pStmt->close();
-
-        $conn->commit();
-
-        header("Location: confirmation.php?pnr=" . urlencode($pnr) . "&date=" . urlencode($journeyDate) . "&fare=" . urlencode($totalFare) . "&from=" . urlencode($fromCity) . "&to=" . urlencode($toCity));
+// Create a booking only when checkout submits the form. GET requests render an existing PNR.
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (empty($_POST['seat_ids'])) {
+        header('Location: search.php');
         exit;
-
-    } catch (Exception $e) {
-        $conn->rollback();
-        die("Booking Error: " . htmlspecialchars($e->getMessage()));
     }
+
+$trainId = (int) ($_POST['train_id'] ?? 0);
+$coachId = (int) ($_POST['coach_id'] ?? 0);
+$journeyDate = trim($_POST['journey_date'] ?? '');
+$fromCode = trim($_POST['from'] ?? '');
+$toCode = trim($_POST['to'] ?? '');
+$seatIds = array_values(array_unique(array_filter(array_map('intval', explode(',', $_POST['seat_ids'])))));
+$passengers = array_values($_POST['passengers'] ?? []);
+
+$tripStatement = $conn->prepare(
+    'SELECT c.seat_price, fs.station_id AS from_station_id, ts.station_id AS to_station_id
+     FROM coaches c
+     INNER JOIN train_stops fstop ON fstop.train_id = c.train_id
+     INNER JOIN stations fs ON fs.station_id = fstop.station_id AND fs.station_code = ?
+     INNER JOIN train_stops tstop ON tstop.train_id = c.train_id
+     INNER JOIN stations ts ON ts.station_id = tstop.station_id AND ts.station_code = ?
+     WHERE c.coach_id = ? AND c.train_id = ? AND fstop.stop_order < tstop.stop_order'
+);
+$tripStatement->bind_param('ssii', $fromCode, $toCode, $coachId, $trainId);
+$tripStatement->execute();
+$trip = $tripStatement->get_result()->fetch_assoc();
+$tripStatement->close();
+
+if (!$trip || count($passengers) !== count($seatIds)) {
+    exit('The selected journey details are no longer valid. Please start the search again.');
+}
+
+$placeholders = implode(',', array_fill(0, count($seatIds), '?'));
+$seatStatement = $conn->prepare("SELECT s.seat_id FROM seats s
+    WHERE s.coach_id = ? AND s.seat_id IN ($placeholders)
+      AND NOT EXISTS (
+          SELECT 1 FROM bookings b
+          WHERE b.status = 'CONFIRMED'
+            AND (
+                b.seat_id = s.seat_id
+                OR EXISTS (
+                    SELECT 1 FROM booking_passengers bp
+                    WHERE bp.booking_id = b.booking_id AND bp.seat_id = s.seat_id
+                )
+            )
+      )");
+$seatTypes = 'i' . str_repeat('i', count($seatIds));
+$seatParams = array_merge([$coachId], $seatIds);
+$seatStatement->bind_param($seatTypes, ...$seatParams);
+$seatStatement->execute();
+$availableSeatCount = $seatStatement->get_result()->num_rows;
+$seatStatement->close();
+
+if ($availableSeatCount !== count($seatIds)) {
+    exit('One or more selected seats are no longer available. Please choose again.');
+}
+
+$mealStatement = $conn->prepare(
+    'SELECT m.meal_id, m.price
+     FROM train_meals tm
+     INNER JOIN meals m ON m.meal_id = tm.meal_id
+     WHERE tm.train_id = ?'
+);
+$mealStatement->bind_param('i', $trainId);
+$mealStatement->execute();
+$mealPrices = [];
+foreach ($mealStatement->get_result()->fetch_all(MYSQLI_ASSOC) as $meal) {
+    $mealPrices[(int) $meal['meal_id']] = (float) $meal['price'];
+}
+$mealStatement->close();
+
+$ticketFare = 0.0;
+$mealFare = 0.0;
+foreach ($passengers as $passenger) {
+    $passengerAge = (int) ($passenger['age'] ?? 0);
+    $passengerMealId = (int) ($passenger['meal_id'] ?? 0);
+    if ($passengerAge < 0 || $passengerAge > 120 || ($passengerMealId > 0 && !array_key_exists($passengerMealId, $mealPrices))) {
+        exit('Passenger age or meal selection is invalid.');
+    }
+    $ticketFare += (float) $trip['seat_price'] * ($passengerAge < 6 ? 0.5 : 1);
+    $mealFare += $mealPrices[$passengerMealId] ?? 0;
+}
+
+$insuranceFare = isset($_POST['travel_insurance']) ? 0.45 * count($seatIds) : 0;
+$totalFare = $ticketFare + $mealFare + $insuranceFare;
+$firstMealId = (int) ($passengers[0]['meal_id'] ?? 0);
+$mealValue = $firstMealId > 0 ? $firstMealId : null;
+$pnr = 'RE' . mt_rand(10000000, 99999999);
+
+$conn->begin_transaction();
+try {
+    $firstSeatId = $seatIds[0];
+    if ($mealValue !== null) {
+        $bookingStatement = $conn->prepare(
+            'INSERT INTO bookings
+             (pnr, user_id, train_id, from_station_id, to_station_id, coach_id, seat_id, meal_id, travel_date, ticket_fare, meal_fare, total_amount, status)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, \'CONFIRMED\')'
+        );
+        $bookingStatement->bind_param('siiiiiiisddd', $pnr, $userId, $trainId, $trip['from_station_id'], $trip['to_station_id'], $coachId, $firstSeatId, $mealValue, $journeyDate, $ticketFare, $mealFare, $totalFare);
+    } else {
+        $bookingStatement = $conn->prepare(
+            'INSERT INTO bookings
+             (pnr, user_id, train_id, from_station_id, to_station_id, coach_id, seat_id, meal_id, travel_date, ticket_fare, meal_fare, total_amount, status)
+             VALUES (?, ?, ?, ?, ?, ?, ?, NULL, ?, ?, ?, ?, \'CONFIRMED\')'
+        );
+        $bookingStatement->bind_param('s' . 'iiiiii' . 'sddd', $pnr, $userId, $trainId, $trip['from_station_id'], $trip['to_station_id'], $coachId, $firstSeatId, $journeyDate, $ticketFare, $mealFare, $totalFare);
+    }
+    $bookingStatement->execute();
+    $bookingId = $conn->insert_id;
+    $bookingStatement->close();
+
+    $passengerWithMealStatement = $conn->prepare(
+        'INSERT INTO booking_passengers (booking_id, seat_id, meal_id, passenger_name, age, gender) VALUES (?, ?, ?, ?, ?, ?)'
+    );
+    $passengerWithoutMealStatement = $conn->prepare(
+        'INSERT INTO booking_passengers (booking_id, seat_id, meal_id, passenger_name, age, gender) VALUES (?, ?, NULL, ?, ?, ?)'
+    );
+    foreach ($passengers as $index => $passenger) {
+        $passengerName = trim($passenger['name'] ?? '');
+        $passengerAge = (int) ($passenger['age'] ?? 0);
+        $passengerGender = trim($passenger['gender'] ?? '');
+        if ($passengerName === '' || $passengerAge < 0 || $passengerGender === '') {
+            throw new RuntimeException('Passenger details are incomplete.');
+        }
+        $passengerSeatId = $seatIds[$index];
+        $passengerMealId = (int) ($passenger['meal_id'] ?? 0);
+        if ($passengerMealId > 0) {
+            $passengerWithMealStatement->bind_param('iiisis', $bookingId, $passengerSeatId, $passengerMealId, $passengerName, $passengerAge, $passengerGender);
+            $passengerWithMealStatement->execute();
+        } else {
+            $passengerWithoutMealStatement->bind_param('iisis', $bookingId, $passengerSeatId, $passengerName, $passengerAge, $passengerGender);
+            $passengerWithoutMealStatement->execute();
+        }
+    }
+    $passengerWithMealStatement->close();
+    $passengerWithoutMealStatement->close();
+    $conn->commit();
+
+    header('Location: confirmation.php?pnr=' . urlencode($pnr));
+    exit;
+} catch (Throwable $exception) {
+    $conn->rollback();
+    error_log('RailEase booking failed: ' . $exception->getMessage());
+    exit('Booking could not be completed. Please try again.');
+}
 }
 
 // Fetch booking by PNR
 $pnr = isset($_GET['pnr']) ? trim($_GET['pnr']) : '';
-$journeyDateDisplay = isset($_GET['date']) ? trim($_GET['date']) : date('Y-m-d');
-$totalFareDisplay   = isset($_GET['fare']) ? (float)$_GET['fare'] : 0;
-$sourceCity         = isset($_GET['from']) && !empty($_GET['from']) ? trim($_GET['from']) : 'HOWRAH';
-$destCity           = isset($_GET['to']) && !empty($_GET['to']) ? trim($_GET['to']) : 'NEW DELHI';
 
 if (empty($pnr)) {
     header("Location: search.php");
     exit;
 }
 
-// SELECT query theke t.source o t.destination bad dewa hoyeche
 $stmt = $conn->prepare("
-    SELECT b.*, t.train_number, t.train_name, c.coach_number, c.coach_type
+    SELECT b.*, t.train_number, t.train_name, c.coach_number, c.coach_type,
+           fs.station_name AS from_station, ts.station_name AS to_station
     FROM bookings b
     JOIN trains t ON b.train_id = t.train_id
     JOIN coaches c ON b.coach_id = c.coach_id
-    WHERE b.pnr = ?
+    JOIN stations fs ON b.from_station_id = fs.station_id
+    JOIN stations ts ON b.to_station_id = ts.station_id
+    WHERE b.pnr = ? AND b.user_id = ?
 ");
-$stmt->bind_param("s", $pnr);
+$stmt->bind_param("si", $pnr, $userId);
 $stmt->execute();
 $booking = $stmt->get_result()->fetch_assoc();
 $stmt->close();
@@ -128,13 +186,17 @@ if (!$booking) {
     die("Ticket not found for PNR: " . htmlspecialchars($pnr));
 }
 
-$fareToPrint = isset($booking['total_fare']) ? $booking['total_fare'] : (isset($booking['fare']) ? $booking['fare'] : $totalFareDisplay);
+$journeyDateDisplay = $booking['travel_date'];
+$sourceCity = $booking['from_station'];
+$destCity = $booking['to_station'];
+$fareToPrint = $booking['total_amount'];
 
 // Passengers with seats
 $pStmt = $conn->prepare("
-    SELECT p.passenger_name, p.age, p.gender, s.seat_number, s.seat_type
-    FROM passengers p
+    SELECT p.passenger_name, p.age, p.gender, m.meal_name, s.seat_number, s.seat_type
+    FROM booking_passengers p
     JOIN seats s ON p.seat_id = s.seat_id
+    LEFT JOIN meals m ON p.meal_id = m.meal_id
     WHERE p.booking_id = ?
     ORDER BY CAST(s.seat_number AS UNSIGNED) ASC
 ");
@@ -227,6 +289,7 @@ $qrUrl  = "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=" . url
                     <tr>
                         <th>Passenger Name</th>
                         <th>Age & Gender</th>
+                        <th>Food</th>
                         <th>Seat No.</th>
                         <th>Berth Position</th>
                     </tr>
@@ -236,6 +299,7 @@ $qrUrl  = "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=" . url
                         <tr>
                             <td><strong><?php echo htmlspecialchars($p['passenger_name']); ?></strong></td>
                             <td><?php echo htmlspecialchars($p['age']); ?> yrs, <?php echo htmlspecialchars($p['gender']); ?></td>
+                            <td><?php echo htmlspecialchars($p['meal_name'] ?? 'No food'); ?></td>
                             <td><span class="seat-pill-tag"><?php echo htmlspecialchars($p['seat_number']); ?></span></td>
                             <td><?php echo htmlspecialchars($p['seat_type']); ?></td>
                         </tr>
@@ -272,7 +336,7 @@ $qrUrl  = "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=" . url
         <button onclick="window.print()" class="action-btn-print">
             🖨 Print / Save PDF
         </button>
-        <a href="search.php" class="action-btn-home">
+        <a href="../user/home.php" class="action-btn-home">
             Book Another Ticket
         </a>
     </div>

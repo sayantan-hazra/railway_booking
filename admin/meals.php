@@ -14,23 +14,49 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $price = (float) ($_POST['price'] ?? 0);
 
     if ($action === 'delete') {
-        $statement = $conn->prepare('DELETE FROM meals WHERE meal_id = ?');
-        $statement->bind_param('i', $meal_id);
-        if ($statement->execute()) {
-            $message = 'Meal deleted successfully.';
+        $usageStatement = $conn->prepare(
+            'SELECT
+                (SELECT COUNT(*) FROM train_meals WHERE meal_id = ?) +
+                (SELECT COUNT(*) FROM bookings WHERE meal_id = ?) AS total'
+        );
+        $usageStatement->bind_param('ii', $meal_id, $meal_id);
+        $usageStatement->execute();
+        $usageCount = (int) $usageStatement->get_result()->fetch_assoc()['total'];
+        $usageStatement->close();
+
+        if ($usageCount > 0) {
+            $error = 'This meal cannot be deleted because it is assigned to a train or booking.';
         } else {
-            $error = 'This meal is being used by a booking and cannot be deleted.';
+            try {
+                $statement = $conn->prepare('DELETE FROM meals WHERE meal_id = ?');
+                $statement->bind_param('i', $meal_id);
+                $statement->execute();
+                $statement->close();
+                $message = 'Meal deleted successfully.';
+            } catch (mysqli_sql_exception $exception) {
+                $error = 'This meal cannot be deleted because it is still in use.';
+            }
         }
     } elseif ($meal_name === '' || $price < 0) {
         $error = 'Meal name is required and price cannot be negative.';
     } elseif ($action === 'update') {
-        $statement = $conn->prepare('UPDATE meals SET meal_name = ?, price = ? WHERE meal_id = ?');
-        $statement->bind_param('sdi', $meal_name, $price, $meal_id);
-        $message = $statement->execute() ? 'Meal updated successfully.' : 'Could not update the meal.';
+        try {
+            $statement = $conn->prepare('UPDATE meals SET meal_name = ?, price = ? WHERE meal_id = ?');
+            $statement->bind_param('sdi', $meal_name, $price, $meal_id);
+            $message = $statement->execute() ? 'Meal updated successfully.' : 'Could not update the meal.';
+            $statement->close();
+        } catch (mysqli_sql_exception $exception) {
+            $error = 'That meal name already exists or could not be saved.';
+        }
     } else {
-        $statement = $conn->prepare('INSERT INTO meals (meal_name, price) VALUES (?, ?)');
-        $statement->bind_param('sd', $meal_name, $price);
-        $message = $statement->execute() ? 'Meal added successfully.' : 'Could not add the meal.';
+        try {
+            $statement = $conn->prepare('INSERT INTO meals (meal_name, price) VALUES (?, ?)');
+            $statement->bind_param('sd', $meal_name, $price);
+            $message = $statement->execute() ? 'Meal added successfully.' : 'Could not add the meal.';
+            $statement->close();
+        } catch (mysqli_sql_exception $exception) {
+            $error = 'That meal name already exists or could not be saved.';
+        }
     }
 }
 

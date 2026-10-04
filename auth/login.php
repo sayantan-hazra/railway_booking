@@ -90,19 +90,22 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
 </head>
 
-<body>
+<body class="auth-page">
 
-<div class="auth-container">
+<main class="auth-card">
 
-    <div class="auth-card">
+        <a class="brand" href="../index.php">
+            <span class="brand-mark">R</span>
+            <span>RailEase</span>
+        </a>
 
-        <h1>Welcome Back</h1>
-
-        <p>Login to your RailEase account</p>
+        <p class="eyebrow">Passenger account</p>
+        <h1>Welcome back</h1>
+        <p class="muted">Login to your RailEase account.</p>
 
         <?php if (isset($_GET["registered"])): ?>
 
-            <div class="success-message">
+            <div class="alert alert-success">
                 Registration successful. Please login.
             </div>
 
@@ -110,31 +113,35 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         <?php if (!empty($message)): ?>
 
-            <div class="error-message">
+            <div class="alert alert-error">
                 <?php echo htmlspecialchars($message); ?>
             </div>
 
         <?php endif; ?>
 
-        <form method="POST">
+        <form method="POST" class="stack-form">
 
-            <label>Username</label>
+            <label for="username">Username</label>
 
             <input
+                id="username"
                 type="text"
                 name="username"
+                autocomplete="username"
                 required
             >
 
-            <label>Password</label>
+            <label for="password">Password</label>
 
             <input
+                id="password"
                 type="password"
                 name="password"
+                autocomplete="current-password"
                 required
             >
 
-            <button type="submit">
+            <button class="button button-primary" type="submit">
                 Login
             </button>
 
@@ -142,12 +149,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         <p>
             Don't have an account?
-            <a href="signup.php">Create Account</a>
+            <a class="back-link" href="signup.php">Create account</a>
         </p>
 
-    </div>
-
-</div>
+</main>
 
 </body>
 </html>

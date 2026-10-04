@@ -1,5 +1,4 @@
-<!-- saikat -->
- <?php
+<?php
 
 require_once __DIR__ . "/../includes/auth_check.php";
 require_once __DIR__ . "/../config/db.php";
@@ -25,7 +24,32 @@ function getBookings($conn, $userId, $condition)
             c.coach_number,
             c.coach_type,
 
-            s.seat_number
+            COALESCE(
+                (
+                    SELECT GROUP_CONCAT(
+                        DISTINCT ps.seat_number
+                        ORDER BY CAST(ps.seat_number AS UNSIGNED)
+                        SEPARATOR ', '
+                    )
+                    FROM booking_passengers bp
+                    INNER JOIN seats ps ON ps.seat_id = bp.seat_id
+                    WHERE bp.booking_id = b.booking_id
+                ),
+                s.seat_number,
+                '-'
+            ) AS seat_numbers,
+
+            COALESCE(
+                NULLIF(
+                    (
+                        SELECT COUNT(*)
+                        FROM booking_passengers bp
+                        WHERE bp.booking_id = b.booking_id
+                    ),
+                    0
+                ),
+                1
+            ) AS passenger_count
 
         FROM bookings b
 
@@ -81,6 +105,9 @@ $cancelled = getBookings(
     "b.status = 'CANCELLED'"
 );
 
+$notice = $_GET['cancelled'] ?? '';
+$error = $_GET['error'] ?? '';
+
 ?>
 
 <!DOCTYPE html>
@@ -105,7 +132,7 @@ $cancelled = getBookings(
 
 </head>
 
-<body>
+<body class="user-body">
 
 <?php require_once __DIR__ . "/../includes/navbar.php"; ?>
 
@@ -131,6 +158,9 @@ $cancelled = getBookings(
     <!-- UPCOMING BOOKINGS -->
 
     <section class="upcoming-section">
+
+        <?php if ($notice === '1'): ?><div class="alert alert-success">Booking cancelled and refund added to your wallet.</div><?php endif; ?>
+        <?php if ($error !== ''): ?><div class="alert alert-error"><?= htmlspecialchars($error) ?></div><?php endif; ?>
 
         <div class="section-heading">
 
@@ -194,10 +224,15 @@ $cancelled = getBookings(
                     </p>
 
                     <p>
-                        Seat:
+                        Seats:
                         <?php echo htmlspecialchars(
-                            $booking["seat_number"] ?? "-"
+                            $booking["seat_numbers"]
                         ); ?>
+                    </p>
+
+                    <p>
+                        Passengers:
+                        <?php echo (int) $booking['passenger_count']; ?>
                     </p>
 
                     <p>

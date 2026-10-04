@@ -40,6 +40,11 @@
                 <span class="action-text">Support</span>
             </a>
 
+            <a href="../auth/logout.php" class="header-action">
+                <span class="action-icon">&#8594;</span>
+                <span class="action-text">Logout</span>
+            </a>
+
         </div>
 
     </div>

@@ -5,6 +5,7 @@
  */
 
 require_once __DIR__ . '/../config/db.php';
+require_once __DIR__ . '/../includes/auth_check.php';
 
 $pageTitle = "Select Seats";
 
@@ -21,7 +22,7 @@ if ($trainId <= 0 || $coachId <= 0) {
 
 // Fetch train and coach details
 $stmt = $conn->prepare("
-    SELECT t.train_number, t.train_name, c.coach_type, c.coach_number 
+    SELECT t.train_number, t.train_name, c.coach_type, c.coach_number, c.seat_price
     FROM coaches c
     JOIN trains t ON c.train_id = t.train_id
     WHERE c.coach_id = ? AND t.train_id = ?
@@ -37,15 +38,48 @@ if (!$details) {
 }
 
 // Pricing logic
-$seatPrice = 500;
-if ($details['coach_type'] === '1A') $seatPrice = 2400;
-elseif ($details['coach_type'] === '2A') $seatPrice = 1500;
-elseif ($details['coach_type'] === '3A') $seatPrice = 1050;
-elseif ($details['coach_type'] === 'SL') $seatPrice = 450;
+$seatPrice = (float) $details['seat_price'];
 
-// Fetch seats
+// Ensure every coach has seven rows with two seats on each side.
+$existingSeatStatement = $conn->prepare('SELECT seat_number FROM seats WHERE coach_id = ?');
+$existingSeatStatement->bind_param('i', $coachId);
+$existingSeatStatement->execute();
+$existingSeatNumbers = array_map(
+    static fn (array $seat): string => (string) $seat['seat_number'],
+    $existingSeatStatement->get_result()->fetch_all(MYSQLI_ASSOC)
+);
+$existingSeatStatement->close();
+
+$seatInsertStatement = $conn->prepare(
+    'INSERT INTO seats (coach_id, seat_number, seat_type) VALUES (?, ?, ?)'
+);
+$seatTypes = ['WINDOW', 'AISLE', 'AISLE', 'WINDOW'];
+for ($seatNumber = 1; $seatNumber <= 28; $seatNumber++) {
+    if (!in_array((string) $seatNumber, $existingSeatNumbers, true)) {
+        $seatLabel = (string) $seatNumber;
+        $seatType = $seatTypes[($seatNumber - 1) % 4];
+        $seatInsertStatement->bind_param('iss', $coachId, $seatLabel, $seatType);
+        $seatInsertStatement->execute();
+    }
+}
+$seatInsertStatement->close();
+
+// Fetch all seats so reserved seats remain visible in their fixed positions.
 $seatsList = [];
-$seatStmt = $conn->prepare("SELECT seat_id, seat_number, seat_type FROM seats WHERE coach_id = ? ORDER BY seat_id ASC");
+$seatStmt = $conn->prepare("SELECT s.seat_id, s.seat_number, s.seat_type,
+        CASE WHEN b.booking_id IS NULL THEN 0 ELSE 1 END AS is_booked
+        FROM seats s
+        LEFT JOIN bookings b ON b.status = 'CONFIRMED'
+            AND (
+                b.seat_id = s.seat_id
+                OR EXISTS (
+                    SELECT 1
+                    FROM booking_passengers bp
+                    WHERE bp.booking_id = b.booking_id AND bp.seat_id = s.seat_id
+                )
+            )
+        WHERE s.coach_id = ?
+        ORDER BY s.seat_id ASC");
 $seatStmt->bind_param("i", $coachId);
 $seatStmt->execute();
 $seatRes = $seatStmt->get_result();
@@ -84,6 +118,10 @@ $seatStmt->close();
                 <a href="../user/support.php" class="header-action">
                     <span class="action-icon">?</span>
                     <span class="action-text">Support</span>
+                </a>
+                <a href="../auth/logout.php" class="header-action">
+                    <span class="action-icon">&#8594;</span>
+                    <span class="action-text">Logout</span>
                 </a>
             </div>
         </div>
@@ -142,7 +180,7 @@ $seatStmt->close();
                             <div class="seat-side">
                                 <?php if (isset($row[0])): ?>
                                     <div class="seat-item">
-                                        <button type="button" class="seat-btn" data-id="<?php echo $row[0]['seat_id']; ?>" data-num="<?php echo htmlspecialchars($row[0]['seat_number']); ?>" onclick="selectSeat(this)">
+                                        <button type="button" class="seat-btn<?php echo $row[0]['is_booked'] ? ' booked' : ''; ?>" data-id="<?php echo $row[0]['seat_id']; ?>" data-num="<?php echo htmlspecialchars($row[0]['seat_number']); ?>" <?php echo $row[0]['is_booked'] ? 'disabled' : 'onclick="selectSeat(this)"'; ?>>
                                             <?php echo htmlspecialchars($row[0]['seat_number']); ?>
                                         </button>
                                         <span class="seat-type-text"><?php echo htmlspecialchars($row[0]['seat_type'] ?? 'Win'); ?></span>
@@ -151,7 +189,7 @@ $seatStmt->close();
 
                                 <?php if (isset($row[1])): ?>
                                     <div class="seat-item">
-                                        <button type="button" class="seat-btn" data-id="<?php echo $row[1]['seat_id']; ?>" data-num="<?php echo htmlspecialchars($row[1]['seat_number']); ?>" onclick="selectSeat(this)">
+                                        <button type="button" class="seat-btn<?php echo $row[1]['is_booked'] ? ' booked' : ''; ?>" data-id="<?php echo $row[1]['seat_id']; ?>" data-num="<?php echo htmlspecialchars($row[1]['seat_number']); ?>" <?php echo $row[1]['is_booked'] ? 'disabled' : 'onclick="selectSeat(this)"'; ?>>
                                             <?php echo htmlspecialchars($row[1]['seat_number']); ?>
                                         </button>
                                         <span class="seat-type-text"><?php echo htmlspecialchars($row[1]['seat_type'] ?? 'Aisle'); ?></span>
@@ -166,7 +204,7 @@ $seatStmt->close();
                             <div class="seat-side">
                                 <?php if (isset($row[2])): ?>
                                     <div class="seat-item">
-                                        <button type="button" class="seat-btn" data-id="<?php echo $row[2]['seat_id']; ?>" data-num="<?php echo htmlspecialchars($row[2]['seat_number']); ?>" onclick="selectSeat(this)">
+                                        <button type="button" class="seat-btn<?php echo $row[2]['is_booked'] ? ' booked' : ''; ?>" data-id="<?php echo $row[2]['seat_id']; ?>" data-num="<?php echo htmlspecialchars($row[2]['seat_number']); ?>" <?php echo $row[2]['is_booked'] ? 'disabled' : 'onclick="selectSeat(this)"'; ?>>
                                             <?php echo htmlspecialchars($row[2]['seat_number']); ?>
                                         </button>
                                         <span class="seat-type-text"><?php echo htmlspecialchars($row[2]['seat_type'] ?? 'SL'); ?></span>
@@ -175,7 +213,7 @@ $seatStmt->close();
 
                                 <?php if (isset($row[3])): ?>
                                     <div class="seat-item">
-                                        <button type="button" class="seat-btn" data-id="<?php echo $row[3]['seat_id']; ?>" data-num="<?php echo htmlspecialchars($row[3]['seat_number']); ?>" onclick="selectSeat(this)">
+                                        <button type="button" class="seat-btn<?php echo $row[3]['is_booked'] ? ' booked' : ''; ?>" data-id="<?php echo $row[3]['seat_id']; ?>" data-num="<?php echo htmlspecialchars($row[3]['seat_number']); ?>" <?php echo $row[3]['is_booked'] ? 'disabled' : 'onclick="selectSeat(this)"'; ?>>
                                             <?php echo htmlspecialchars($row[3]['seat_number']); ?>
                                         </button>
                                         <span class="seat-type-text"><?php echo htmlspecialchars($row[3]['seat_type'] ?? 'SU'); ?></span>

@@ -1,5 +1,6 @@
 <?php
 session_start();
+require_once __DIR__ . '/config/db.php';
 
 if (isset($_SESSION["user_id"])) {
 	header("Location: user/home.php");
@@ -7,6 +8,18 @@ if (isset($_SESSION["user_id"])) {
 }
 
 $pageTitle = "Book Your Journey";
+$stations = [];
+$stationResult = $conn->query(
+	"SELECT station_code, station_name, city
+	 FROM stations
+	 ORDER BY station_name"
+);
+
+if ($stationResult) {
+	while ($station = $stationResult->fetch_assoc()) {
+		$stations[] = $station;
+	}
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -284,12 +297,26 @@ $pageTitle = "Book Your Journey";
 					<form action="booking/search.php" method="GET" class="landing-search-form" id="trainSearchForm">
 						<div class="landing-field">
 							<label for="from">From</label>
-							<input type="text" id="from" name="from" placeholder="Departure station or code" autocomplete="off" required>
+							<select id="from" name="from" required>
+								<option value="" selected disabled>Select departure station</option>
+								<?php foreach ($stations as $station): ?>
+									<option value="<?= htmlspecialchars($station['station_code']) ?>">
+										<?= htmlspecialchars($station['station_name'] . ' (' . $station['station_code'] . ')') ?>
+									</option>
+								<?php endforeach; ?>
+							</select>
 						</div>
 
 						<div class="landing-field">
 							<label for="to">To</label>
-							<input type="text" id="to" name="to" placeholder="Destination station or code" autocomplete="off" required>
+							<select id="to" name="to" required>
+								<option value="" selected disabled>Select destination station</option>
+								<?php foreach ($stations as $station): ?>
+									<option value="<?= htmlspecialchars($station['station_code']) ?>">
+										<?= htmlspecialchars($station['station_name'] . ' (' . $station['station_code'] . ')') ?>
+									</option>
+								<?php endforeach; ?>
+							</select>
 						</div>
 
 						<div class="landing-field">

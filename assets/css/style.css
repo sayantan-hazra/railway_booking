@@ -143,6 +143,33 @@ textarea:focus {
   color: var(--danger);
   background: #fef2f2;
 }
+.repeatable-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.repeatable-row select {
+  flex: 1;
+  min-width: 0;
+}
+.repeatable-row input[type="time"] {
+  flex: 0 0 120px;
+  min-width: 0;
+  padding: 8px;
+}
+.time-fields {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+.time-fields input {
+  min-width: 0;
+}
+.repeatable-row .button {
+  flex: 0 0 auto;
+  padding: 8px 10px;
+  font-size: 12px;
+}
 .back-link {
   display: block;
   margin-top: 22px;
@@ -423,6 +450,47 @@ textarea:focus {
 .action-links a.danger {
   color: var(--danger);
 }
+
+.booking-details-panel {
+  margin-top: 20px;
+}
+
+.booking-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+
+.booking-detail-grid > div {
+  display: grid;
+  gap: 5px;
+  padding: 13px;
+  background: #f8fafc;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.booking-detail-grid strong {
+  overflow-wrap: anywhere;
+  font-size: 13px;
+}
+
+.booking-details-heading {
+  margin: 24px 0 12px;
+  font: 600 17px "Space Grotesk", sans-serif;
+}
+
+@media (max-width: 800px) {
+  .booking-detail-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 520px) {
+  .booking-detail-grid {
+    grid-template-columns: 1fr;
+  }
+}
 @media (max-width: 900px) {
   .stats-grid {
     grid-template-columns: repeat(2, 1fr);
@@ -644,7 +712,8 @@ textarea:focus {
   position: relative;
 }
 
-.input-wrapper input {
+.input-wrapper input,
+.input-wrapper select {
   min-height: 48px;
   padding-left: 40px;
 }
@@ -752,6 +821,143 @@ textarea:focus {
 
 .upcoming-section {
   margin-bottom: 30px;
+}
+
+.booking-card {
+  display: grid;
+  grid-template-columns: minmax(180px, 1.2fr) repeat(2, minmax(130px, 0.8fr)) minmax(150px, 1fr);
+  align-items: center;
+  gap: 12px 20px;
+  margin-bottom: 14px;
+  padding: 22px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.05);
+}
+
+.booking-card h3 {
+  grid-column: 1 / -1;
+  margin: 0;
+  color: var(--text);
+  font: 700 19px "Space Grotesk", sans-serif;
+}
+
+.booking-card p {
+  min-width: 0;
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.booking-card p strong,
+.booking-card > p:nth-of-type(1) {
+  color: var(--text);
+}
+
+.booking-card p:nth-of-type(2) {
+  color: var(--primary);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.booking-card > a {
+  color: var(--primary);
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.booking-card > a:hover {
+  text-decoration: underline;
+}
+
+.booking-card > form {
+  margin: 0;
+}
+
+.booking-card > form button {
+  padding: 8px 11px;
+  color: var(--danger);
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 7px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.booking-card > form button:hover {
+  background: #fee2e2;
+}
+
+.home-booking-card {
+  grid-template-columns: minmax(190px, 1fr) minmax(190px, 1fr) minmax(220px, 1.2fr) auto;
+}
+
+.home-booking-heading h3 {
+  margin: 4px 0;
+}
+
+.home-booking-heading span {
+  color: var(--text-secondary);
+  font-size: 12px;
+}
+
+.home-booking-route {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: var(--primary);
+  font-size: 14px;
+}
+
+.home-booking-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  color: var(--text-secondary);
+  font-size: 12px;
+}
+
+.home-booking-meta strong {
+  display: block;
+  margin-top: 3px;
+  color: var(--text);
+  font-size: 13px;
+}
+
+.home-booking-actions {
+  display: grid;
+  justify-items: end;
+  gap: 8px;
+}
+
+@media (max-width: 760px) {
+  .booking-card {
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .booking-card h3,
+  .booking-card > a,
+  .booking-card > form {
+    grid-column: 1 / -1;
+  }
+
+  .home-booking-card {
+    grid-template-columns: 1fr;
+  }
+
+  .home-booking-route {
+    justify-content: flex-start;
+  }
+
+  .home-booking-actions {
+    justify-items: start;
+  }
 }
 
 .section-heading {
@@ -1096,6 +1302,12 @@ textarea:focus {
   font:
     600 21px "Space Grotesk",
     sans-serif;
+}
+
+.train-time .train-city {
+  color: var(--text);
+  font-size: 15px;
+  font-weight: 700;
 }
 
 .train-time span {
@@ -1499,6 +1711,15 @@ textarea:focus {
     box-shadow: 0 3px 8px rgba(16, 185, 129, 0.4);
 }
 
+  .seat-btn.booked,
+  .seat-btn.booked:hover {
+    color: #94a3b8;
+    background: #e2e8f0;
+    border-color: #cbd5e1;
+    cursor: not-allowed;
+    transform: none;
+  }
+
 .seat-type-text {
     font-size: 10px;
     font-weight: 600;
@@ -1589,6 +1810,12 @@ textarea:focus {
     border-bottom: 1px solid #f1f5f9;
 }
 
+  .checkout-note {
+    margin: -0.45rem 0 1rem;
+    color: #64748b;
+    font-size: 0.82rem;
+  }
+
 /* Passenger Inputs Row */
 .passenger-box {
     background: #f8fafc;
@@ -1611,7 +1838,7 @@ textarea:focus {
 
 .passenger-row {
     display: grid;
-    grid-template-columns: 2fr 1fr 1fr;
+  grid-template-columns: 2fr 1fr 1fr 1.35fr;
     gap: 1rem;
 }
 
@@ -1928,20 +2155,346 @@ textarea:focus {
     background: #1d4ed8;
 }
 
+/* =====================================================
+   BOOKING CONFIRMATION / PRINTABLE TICKET
+===================================================== */
+
+.ticket-page-bg {
+  min-height: 100vh;
+  margin: 0;
+  padding: 40px 20px 96px;
+  color: #0f172a;
+  background: #eaf2fb;
+}
+
+.ticket-card-container {
+  width: min(900px, 100%);
+  margin: 0 auto;
+  overflow: hidden;
+  background: #ffffff;
+  border: 1px solid #dbe5f0;
+  border-radius: 18px;
+  box-shadow: 0 24px 65px rgba(15, 23, 42, 0.14);
+}
+
+.ticket-head-banner {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 30px 36px;
+  color: #ffffff;
+  background: #1e3a8a;
+}
+
+.brand-badge,
+.train-no-tag,
+.status-badge-premium,
+.pnr-box-meta span,
+.date-box-meta span,
+.station-node span,
+.tile-box span {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.brand-badge {
+  color: #bfdbfe;
+}
+
+.train-title-main {
+  margin: 10px 0 6px;
+  color: #ffffff;
+  font: 700 30px/1.15 "Space Grotesk", sans-serif;
+}
+
+.train-no-tag {
+  color: #dbeafe;
+  letter-spacing: 0.04em;
+}
+
+.status-badge-premium {
+  padding: 9px 12px;
+  color: #166534;
+  background: #dcfce7;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.pnr-ribbon-bar {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  padding: 20px 36px;
+  background: #f8fafc;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.pnr-box-meta h2,
+.date-box-meta h3 {
+  margin: 6px 0 0;
+  font: 700 22px "Space Grotesk", sans-serif;
+}
+
+.pnr-box-meta span,
+.date-box-meta span,
+.tile-box span {
+  color: #64748b;
+}
+
+.ticket-body-content {
+  padding: 30px 36px;
+}
+
+.route-flight-bar {
+  display: grid;
+  grid-template-columns: 1fr minmax(130px, 0.7fr) 1fr;
+  align-items: center;
+  gap: 24px;
+  padding: 22px 0 28px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.station-node h4 {
+  margin: 7px 0 0;
+  color: #0f172a;
+  font: 700 24px "Space Grotesk", sans-serif;
+}
+
+.station-node span {
+  color: #2563eb;
+}
+
+.train-mid-path {
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  color: #2563eb;
+}
+
+.path-icon {
+  font-size: 22px;
+}
+
+.path-line {
+  width: 100%;
+  height: 2px;
+  background: #bfdbfe;
+}
+
+.journey-info-tiles {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin: 24px 0 30px;
+}
+
+.tile-box {
+  padding: 16px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+}
+
+.tile-box strong {
+  display: block;
+  margin-top: 8px;
+  font-size: 16px;
+}
+
+.fare-tile strong {
+  color: #15803d;
+}
+
+.pass-section-header {
+  margin: 0 0 12px;
+  font: 700 18px "Space Grotesk", sans-serif;
+}
+
+.pass-board-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.pass-board-table th,
+.pass-board-table td {
+  padding: 12px 10px;
+  text-align: left;
+  vertical-align: top;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.pass-board-table th {
+  color: #64748b;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.seat-pill-tag {
+  display: inline-block;
+  padding: 4px 8px;
+  color: #1d4ed8;
+  background: #dbeafe;
+  border-radius: 6px;
+  font-weight: 700;
+}
+
+.ticket-perforation {
+  padding: 0 36px;
+}
+
+.dashed-divider-line {
+  border-top: 2px dashed #cbd5e1;
+}
+
+.ticket-foot-bar {
+  display: grid;
+  grid-template-columns: 1fr 150px;
+  gap: 28px;
+  align-items: center;
+  padding: 24px 36px 30px;
+}
+
+.guidelines-col ul {
+  margin: 10px 0 0;
+  padding-left: 18px;
+  color: #64748b;
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+.qr-code-box {
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  color: #64748b;
+  font-size: 11px;
+  text-align: center;
+}
+
+.qr-code-box img {
+  width: 120px;
+  height: 120px;
+}
+
+.ticket-floating-actions {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  left: 20px;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.action-btn-print,
+.action-btn-home {
+  padding: 11px 16px;
+  border: 0;
+  border-radius: 8px;
+  color: #ffffff;
+  background: #0f172a;
+  cursor: pointer;
+  font: 700 13px "DM Sans", sans-serif;
+  text-decoration: none;
+}
+
+.action-btn-home {
+  background: #2563eb;
+}
+
+@media (max-width: 680px) {
+  .ticket-page-bg {
+    padding: 16px 10px 88px;
+  }
+
+  .ticket-head-banner,
+  .ticket-body-content,
+  .ticket-foot-bar,
+  .pnr-ribbon-bar {
+    padding-right: 20px;
+    padding-left: 20px;
+  }
+
+  .ticket-head-banner,
+  .ticket-foot-bar {
+    grid-template-columns: 1fr;
+    display: grid;
+  }
+
+  .train-title-main {
+    font-size: 24px;
+  }
+
+  .route-flight-bar,
+  .journey-info-tiles {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .train-mid-path {
+    grid-row: 2;
+  }
+
+  .station-node[style] {
+    text-align: left !important;
+  }
+
+  .pass-board-table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+}
+
 @media print {
-    .user-header,
-    .ticket-actions,
-    .search-back-link {
+  @page {
+    size: A4;
+    margin: 10mm;
+  }
+
+  .ticket-page-bg {
+    padding: 0;
+    background: #ffffff;
+  }
+
+  .ticket-card-container {
+    width: 100%;
+    border: 1px solid #cbd5e1;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .ticket-floating-actions,
+  .user-header,
+  .ticket-actions,
+  .search-back-link {
         display: none !important;
     }
-    .ticket-wrapper {
-        margin: 0;
-        max-width: 100%;
-        padding: 0;
+
+  .ticket-head-banner {
+    color: #0f172a;
+    background: #ffffff;
+    border-bottom: 2px solid #1e3a8a;
     }
-    .ticket-glass {
-        border: 1px solid #ccc;
-        box-shadow: none;
+
+  .train-title-main,
+  .train-no-tag {
+    color: #0f172a;
+  }
+
+  .ticket-card-container,
+  .ticket-head-banner,
+  .pnr-ribbon-bar,
+  .ticket-body-content,
+  .ticket-foot-bar,
+  .journey-info-tiles,
+  .pass-board-table tr {
+    break-inside: avoid;
     }
 }
 /* =====================================
@@ -1982,6 +2535,17 @@ textarea:focus {
 
 .train-summary-col .summary-title.date-highlight {
     color: #2563eb;
+}
+
+.coach-route-city {
+  color: #0f172a;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.coach-route-date {
+  font-size: 14px;
+  font-weight: 500;
 }
 
 .trains-heading {
