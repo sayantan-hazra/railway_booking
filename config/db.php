@@ -1,6 +1,7 @@
 <?php
 
 $host = "localhost";
+$port = 3307;
 $dbname = "railway_booking";
 $username = "root";
 $password = ""; // Default XAMPP setup
@@ -10,7 +11,8 @@ $conn = new mysqli(
     $host,
     $username,
     $password,
-    $dbname
+    $dbname,
+    $port
 );
 
 // Check connection

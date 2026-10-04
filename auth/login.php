@@ -95,8 +95,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 <main class="auth-card">
 
         <a class="brand" href="../index.php">
-            <span class="brand-mark">R</span>
-            <span>RailEase</span>
+            <img class="brand-logo" src="../assets/logo.png" alt="RailEase">
         </a>
 
         <p class="eyebrow">Passenger account</p>

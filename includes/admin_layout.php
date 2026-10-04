@@ -27,7 +27,7 @@ function admin_header(string $title, string $active = 'dashboard'): void
     <body class="admin-body">
         <div class="admin-layout">
             <aside class="admin-sidebar">
-                <a class="brand brand-light" href="dashboard.php"><span class="brand-mark">R</span> RailEase</a>
+                <a class="brand brand-light" href="dashboard.php"><img class="brand-logo" src="../assets/logo.png" alt="RailEase"></a>
                 <p class="sidebar-label">Workspace</p>
                 <nav class="admin-nav" aria-label="Admin navigation">
                     <?php foreach ($items as $key => [$label, $url]): ?>

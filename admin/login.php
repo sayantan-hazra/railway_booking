@@ -52,7 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 <body class="auth-page">
     <main class="auth-card">
-        <a class="brand" href="../index.php"><span class="brand-mark">R</span> RailEase</a>
+        <a class="brand" href="../index.php"><img class="brand-logo" src="../assets/logo.png" alt="RailEase"></a>
         <p class="eyebrow">Administration</p>
         <h1>Welcome back</h1>
         <p class="muted">Sign in to manage the railway booking system.</p>

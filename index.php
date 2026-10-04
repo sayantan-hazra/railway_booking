@@ -263,8 +263,7 @@ if ($stationResult) {
 	<header class="landing-header">
 		<nav class="landing-nav" aria-label="Main navigation">
 			<a href="index.php" class="brand" aria-label="RailEase home">
-				<span class="brand-mark">R</span>
-				<span>RailEase</span>
+				<img class="brand-logo" src="assets/logo.png" alt="RailEase">
 			</a>
 
 			<div class="landing-actions">

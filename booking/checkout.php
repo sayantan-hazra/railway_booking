@@ -128,8 +128,7 @@ $mealStatement->close();
     <header class="user-header">
         <div class="user-header-inner">
             <a href="../user/home.php" class="brand">
-                <span class="brand-mark">R</span>
-                <span>RailEase</span>
+                <img class="brand-logo" src="../assets/logo.png" alt="RailEase">
             </a>
             <div class="header-actions">
                 <a href="../user/wallet.php" class="header-action"><span class="action-icon">₹</span><span class="action-text">Wallet</span></a>

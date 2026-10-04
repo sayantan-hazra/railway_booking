@@ -102,8 +102,7 @@ if ($stationResult) {
 
             <!-- RailEase Logo -->
             <a href="home.php" class="brand">
-                <span class="brand-mark">R</span>
-                <span>RailEase</span>
+                <img class="brand-logo" src="../assets/logo.png" alt="RailEase">
             </a>
 
             <!-- Header Actions -->

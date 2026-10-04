@@ -36,19 +36,15 @@ textarea {
 .brand {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 0;
   font:
     700 20px "Space Grotesk",
     sans-serif;
 }
-.brand-mark {
-  display: grid;
-  place-items: center;
-  width: 34px;
-  height: 34px;
-  color: white;
-  background: var(--primary);
-  border-radius: 9px;
+.brand-logo {
+  display: block;
+  width: 148px;
+  height: auto;
 }
 .brand-light {
   color: white;
@@ -477,7 +473,9 @@ textarea:focus {
 
 .booking-details-heading {
   margin: 24px 0 12px;
-  font: 600 17px "Space Grotesk", sans-serif;
+  font:
+    600 17px "Space Grotesk",
+    sans-serif;
 }
 
 @media (max-width: 800px) {
@@ -825,7 +823,10 @@ textarea:focus {
 
 .booking-card {
   display: grid;
-  grid-template-columns: minmax(180px, 1.2fr) repeat(2, minmax(130px, 0.8fr)) minmax(150px, 1fr);
+  grid-template-columns: minmax(180px, 1.2fr) repeat(
+      2,
+      minmax(130px, 0.8fr)
+    ) minmax(150px, 1fr);
   align-items: center;
   gap: 12px 20px;
   margin-bottom: 14px;
@@ -840,7 +841,9 @@ textarea:focus {
   grid-column: 1 / -1;
   margin: 0;
   color: var(--text);
-  font: 700 19px "Space Grotesk", sans-serif;
+  font:
+    700 19px "Space Grotesk",
+    sans-serif;
 }
 
 .booking-card p {
@@ -893,7 +896,10 @@ textarea:focus {
 }
 
 .home-booking-card {
-  grid-template-columns: minmax(190px, 1fr) minmax(190px, 1fr) minmax(220px, 1.2fr) auto;
+  grid-template-columns: minmax(190px, 1fr) minmax(190px, 1fr) minmax(
+      220px,
+      1.2fr
+    ) auto;
 }
 
 .home-booking-heading h3 {
@@ -1079,9 +1085,8 @@ textarea:focus {
     font-size: 18px;
   }
 
-  .brand-mark {
-    width: 31px;
-    height: 31px;
+  .brand-logo {
+    width: 128px;
   }
 
   .header-actions {
@@ -1394,765 +1399,768 @@ textarea:focus {
    Train Search Form Styles
    ========================================= */
 .train-search-form-custom {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 16px;
-    align-items: flex-end;
-    width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: flex-end;
+  width: 100%;
 }
 
 .field-group {
-    flex: 1 1 200px;
-    min-width: 160px;
-    display: flex;
-    flex-direction: column;
+  flex: 1 1 200px;
+  min-width: 160px;
+  display: flex;
+  flex-direction: column;
 }
 
 .field-group label {
-    display: block;
-    margin-bottom: 8px;
-    font-size: 14px;
-    font-weight: 600;
-    color: #334155;
+  display: block;
+  margin-bottom: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #334155;
 }
 
 .field-group input {
-    width: 100%;
-    height: 48px;
-    padding: 10px 14px;
-    border: 1px solid #cbd5e1;
-    border-radius: 8px;
-    font-size: 15px;
-    box-sizing: border-box;
-    outline: none;
-    background-color: #ffffff;
+  width: 100%;
+  height: 48px;
+  padding: 10px 14px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 15px;
+  box-sizing: border-box;
+  outline: none;
+  background-color: #ffffff;
 }
 
 .field-group input:focus {
-    border-color: #2563eb;
-    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
+  border-color: #2563eb;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
 }
 
 .search-btn-custom {
-    height: 48px;
-    padding: 0 28px;
-    border-radius: 8px;
-    font-weight: 600;
-    white-space: nowrap;
-    align-self: flex-end;
-    margin-bottom: 0;
-    cursor: pointer;
+  height: 48px;
+  padding: 0 28px;
+  border-radius: 8px;
+  font-weight: 600;
+  white-space: nowrap;
+  align-self: flex-end;
+  margin-bottom: 0;
+  cursor: pointer;
 }
 /* =========================================
    Coach Selection Styles
    ========================================= */
 .coach-container {
-    max-width: 900px;
-    margin: 2rem auto;
-    padding: 0 1rem;
+  max-width: 900px;
+  margin: 2rem auto;
+  padding: 0 1rem;
 }
 
 .train-summary-card {
-    background: #ffffff;
-    padding: 1.5rem;
-    border-radius: 12px;
-    border: 1px solid #e2e8f0;
-    margin-bottom: 2rem;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+  background: #ffffff;
+  padding: 1.5rem;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  margin-bottom: 2rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
 }
 
 .train-summary-eyebrow {
-    color: #64748b;
-    margin-bottom: 4px;
-    font-size: 0.85rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
+  color: #64748b;
+  margin-bottom: 4px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .train-summary-title {
-    font-size: 1.5rem;
-    margin: 0 0 8px 0;
-    color: #0f172a;
+  font-size: 1.5rem;
+  margin: 0 0 8px 0;
+  color: #0f172a;
 }
 
 .train-summary-route {
-    color: #475569;
-    margin: 0;
-    font-size: 0.95rem;
+  color: #475569;
+  margin: 0;
+  font-size: 0.95rem;
 }
 
 .section-heading-coach {
-    font-size: 1.3rem;
-    margin-bottom: 1.2rem;
-    color: #1e293b;
+  font-size: 1.3rem;
+  margin-bottom: 1.2rem;
+  color: #1e293b;
 }
 
 .coach-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 1.5rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.5rem;
 }
 
 .coach-card {
-    background: #ffffff;
-    border: 1px solid #e2e8f0;
-    border-radius: 12px;
-    padding: 1.5rem;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s,
+    border-color 0.2s;
 }
 
 .coach-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.06);
-    border-color: #2563eb;
+  transform: translateY(-3px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.06);
+  border-color: #2563eb;
 }
 
 .coach-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
 }
 
 .coach-title {
-    font-size: 1.15rem;
-    font-weight: 700;
-    color: #0f172a;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #0f172a;
 }
 
 .coach-badge {
-    background: #dbeafe;
-    color: #1e40af;
-    padding: 4px 10px;
-    border-radius: 6px;
-    font-size: 0.85rem;
-    font-weight: 600;
+  background: #dbeafe;
+  color: #1e40af;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
 }
 
 .coach-fare {
-    font-size: 1.4rem;
-    font-weight: 700;
-    color: #2563eb;
-    margin-bottom: 0.5rem;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #2563eb;
+  margin-bottom: 0.5rem;
 }
 
 .coach-seats {
-    color: #16a34a;
-    font-weight: 600;
-    font-size: 0.9rem;
-    margin-bottom: 1.5rem;
+  color: #16a34a;
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-bottom: 1.5rem;
 }
 
 .select-coach-btn {
-    display: block;
-    text-align: center;
-    background: #2563eb;
-    color: #ffffff;
-    padding: 10px 16px;
-    border-radius: 8px;
-    font-weight: 600;
-    text-decoration: none;
-    transition: background 0.2s;
+  display: block;
+  text-align: center;
+  background: #2563eb;
+  color: #ffffff;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.2s;
 }
 
 .select-coach-btn:hover {
-    background: #1d4ed8;
+  background: #1d4ed8;
 }
 /* ====================================================
    BookMyShow Train Bogie Layout (2 + AISLE + 2)
    ==================================================== */
 .seat-booking-container {
-    max-width: 680px;
-    margin: 30px auto;
-    padding: 0 16px 120px;
+  max-width: 680px;
+  margin: 30px auto;
+  padding: 0 16px 120px;
 }
 
 /* Legend */
 .seat-legend {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 24px;
-    margin: 20px 0;
-    padding: 12px;
-    background: #ffffff;
-    border-radius: 8px;
-    border: 1px solid #e2e8f0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 24px;
+  margin: 20px 0;
+  padding: 12px;
+  background: #ffffff;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
 }
 
 .legend-item {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 13px;
-    font-weight: 500;
-    color: #475569;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #475569;
 }
 
 .legend-box {
-    width: 20px;
-    height: 20px;
-    border-radius: 4px;
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
 }
 
 .legend-box.available {
-    border: 1.5px solid #10b981;
-    background: #ffffff;
+  border: 1.5px solid #10b981;
+  background: #ffffff;
 }
 
 .legend-box.selected {
-    background: #10b981;
-    border: 1.5px solid #10b981;
+  background: #10b981;
+  border: 1.5px solid #10b981;
 }
 
 .legend-box.booked {
-    background: #e2e8f0;
-    border: 1.5px solid #cbd5e1;
+  background: #e2e8f0;
+  border: 1.5px solid #cbd5e1;
 }
 
 /* Coach Shell / Bogie */
 .train-coach-box {
-    background: #ffffff;
-    border: 2px solid #cbd5e1;
-    border-radius: 16px;
-    padding: 24px 20px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  background: #ffffff;
+  border: 2px solid #cbd5e1;
+  border-radius: 16px;
+  padding: 24px 20px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
 }
 
 .coach-door {
-    background: #f1f5f9;
-    border: 1px dashed #94a3b8;
-    text-align: center;
-    padding: 8px;
-    border-radius: 6px;
-    font-size: 12px;
-    font-weight: 700;
-    color: #475569;
-    letter-spacing: 1px;
+  background: #f1f5f9;
+  border: 1px dashed #94a3b8;
+  text-align: center;
+  padding: 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #475569;
+  letter-spacing: 1px;
 }
 
 .coach-grid-layout {
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-    margin: 20px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin: 20px 0;
 }
 
 /* Row of 2 + Aisle + 2 */
 .coach-seat-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .seat-side {
-    display: flex;
-    gap: 12px;
+  display: flex;
+  gap: 12px;
 }
 
 /* Walking Aisle */
 .coach-aisle {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 11px;
-    font-weight: 700;
-    color: #94a3b8;
-    letter-spacing: 2px;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: #94a3b8;
+  letter-spacing: 2px;
 }
 
 .coach-aisle::before,
 .coach-aisle::after {
-    content: "";
-    flex: 1;
-    height: 1px;
-    background: #e2e8f0;
-    margin: 0 10px;
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: #e2e8f0;
+  margin: 0 10px;
 }
 
 /* BookMyShow Seat Button */
 .seat-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
 }
 
 .seat-btn {
-    width: 44px;
-    height: 44px;
-    background: #ffffff;
-    border: 1.5px solid #10b981;
-    color: #10b981;
-    border-radius: 6px;
-    font-size: 14px;
-    font-weight: 700;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.15s ease;
+  width: 44px;
+  height: 44px;
+  background: #ffffff;
+  border: 1.5px solid #10b981;
+  color: #10b981;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
 }
 
 .seat-btn:hover {
-    background: #ecfdf5;
-    transform: translateY(-2px);
+  background: #ecfdf5;
+  transform: translateY(-2px);
 }
 
 .seat-btn.selected {
-    background: #10b981 !important;
-    color: #ffffff !important;
-    border-color: #10b981 !important;
-    box-shadow: 0 3px 8px rgba(16, 185, 129, 0.4);
+  background: #10b981 !important;
+  color: #ffffff !important;
+  border-color: #10b981 !important;
+  box-shadow: 0 3px 8px rgba(16, 185, 129, 0.4);
 }
 
-  .seat-btn.booked,
-  .seat-btn.booked:hover {
-    color: #94a3b8;
-    background: #e2e8f0;
-    border-color: #cbd5e1;
-    cursor: not-allowed;
-    transform: none;
-  }
+.seat-btn.booked,
+.seat-btn.booked:hover {
+  color: #94a3b8;
+  background: #e2e8f0;
+  border-color: #cbd5e1;
+  cursor: not-allowed;
+  transform: none;
+}
 
 .seat-type-text {
-    font-size: 10px;
-    font-weight: 600;
-    color: #64748b;
-    text-transform: uppercase;
+  font-size: 10px;
+  font-weight: 600;
+  color: #64748b;
+  text-transform: uppercase;
 }
 
 /* Bottom Bar */
 .bottom-checkout-bar {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: #ffffff;
-    border-top: 1px solid #e2e8f0;
-    padding: 14px 24px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.06);
-    z-index: 999;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #ffffff;
+  border-top: 1px solid #e2e8f0;
+  padding: 14px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.06);
+  z-index: 999;
 }
 
 .checkout-details {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
 .checkout-details span {
-    font-size: 13px;
-    color: #64748b;
+  font-size: 13px;
+  color: #64748b;
 }
 
 .checkout-details strong {
-    font-size: 16px;
-    color: #0f172a;
+  font-size: 16px;
+  color: #0f172a;
 }
 
 .btn-proceed {
-    background: #2563eb;
-    color: #ffffff;
-    padding: 12px 24px;
-    border-radius: 8px;
-    font-weight: 700;
-    border: none;
-    cursor: pointer;
-    font-size: 15px;
-    transition: background 0.2s;
+  background: #2563eb;
+  color: #ffffff;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  font-size: 15px;
+  transition: background 0.2s;
 }
 
 .btn-proceed:disabled {
-    background: #cbd5e1;
-    cursor: not-allowed;
+  background: #cbd5e1;
+  cursor: not-allowed;
 }
 /* ===================================================
    CHECKOUT & PASSENGER DETAILS COMPLETE LAYOUT FIX
    =================================================== */
 .checkout-container {
-    max-width: 1100px;
-    margin: 2rem auto;
-    padding: 0 1.25rem 4rem;
+  max-width: 1100px;
+  margin: 2rem auto;
+  padding: 0 1.25rem 4rem;
 }
 
 .checkout-grid {
-    display: grid;
-    grid-template-columns: 1.8fr 1fr;
-    gap: 2rem;
-    align-items: start;
-    margin-top: 1.5rem;
+  display: grid;
+  grid-template-columns: 1.8fr 1fr;
+  gap: 2rem;
+  align-items: start;
+  margin-top: 1.5rem;
 }
 
 .checkout-card {
-    background: #ffffff;
-    border-radius: 16px;
-    border: 1px solid #e2e8f0;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-    padding: 1.75rem 2rem;
-    margin-bottom: 1.5rem;
+  background: #ffffff;
+  border-radius: 16px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  padding: 1.75rem 2rem;
+  margin-bottom: 1.5rem;
 }
 
 .checkout-card-title {
-    font-size: 1.2rem;
-    font-weight: 700;
-    color: #0f172a;
-    margin: 0 0 1.25rem 0;
-    padding-bottom: 0.75rem;
-    border-bottom: 1px solid #f1f5f9;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 1.25rem 0;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid #f1f5f9;
 }
 
-  .checkout-note {
-    margin: -0.45rem 0 1rem;
-    color: #64748b;
-    font-size: 0.82rem;
-  }
+.checkout-note {
+  margin: -0.45rem 0 1rem;
+  color: #64748b;
+  font-size: 0.82rem;
+}
 
 /* Passenger Inputs Row */
 .passenger-box {
-    background: #f8fafc;
-    border: 1px solid #e2e8f0;
-    border-radius: 12px;
-    padding: 1.25rem;
-    margin-bottom: 1.25rem;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 1.25rem;
+  margin-bottom: 1.25rem;
 }
 
 .passenger-box:last-child {
-    margin-bottom: 0;
+  margin-bottom: 0;
 }
 
 .passenger-label {
-    font-weight: 700;
-    font-size: 0.95rem;
-    color: #2563eb;
-    margin: 0 0 0.85rem 0;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #2563eb;
+  margin: 0 0 0.85rem 0;
 }
 
 .passenger-row {
-    display: grid;
+  display: grid;
   grid-template-columns: 2fr 1fr 1fr 1.35fr;
-    gap: 1rem;
+  gap: 1rem;
 }
 
 .contact-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1.25rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
 }
 
 .input-group {
-    display: flex;
-    flex-direction: column;
-    gap: 0.35rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
 }
 
 .input-group label {
-    font-size: 0.82rem;
-    font-weight: 600;
-    color: #475569;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #475569;
 }
 
 .input-group input,
 .input-group select,
 .checkout-meal-select {
-    width: 100%;
-    padding: 0.65rem 0.85rem;
-    border: 1px solid #cbd5e1;
-    border-radius: 8px;
-    font-family: inherit;
-    font-size: 0.92rem;
-    color: #0f172a;
-    background: #ffffff;
-    box-sizing: border-box;
-    outline: none;
-    transition: all 0.2s;
+  width: 100%;
+  padding: 0.65rem 0.85rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 0.92rem;
+  color: #0f172a;
+  background: #ffffff;
+  box-sizing: border-box;
+  outline: none;
+  transition: all 0.2s;
 }
 
 .input-group input:focus,
 .input-group select:focus,
 .checkout-meal-select:focus {
-    border-color: #2563eb;
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
 }
 
 /* Addons & Preferences */
 .checkout-addon-group {
-    margin-top: 1rem;
-    padding: 1rem;
-    background: #f8fafc;
-    border: 1px dashed #cbd5e1;
-    border-radius: 10px;
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
+  margin-top: 1rem;
+  padding: 1rem;
+  background: #f8fafc;
+  border: 1px dashed #cbd5e1;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
 }
 
 .checkout-addon-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    cursor: pointer;
-    font-size: 0.9rem;
-    color: #1e293b;
-    margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: #1e293b;
+  margin: 0;
 }
 
 .checkout-addon-item input[type="checkbox"] {
-    width: 18px;
-    height: 18px;
-    accent-color: #2563eb;
-    cursor: pointer;
+  width: 18px;
+  height: 18px;
+  accent-color: #2563eb;
+  cursor: pointer;
 }
 
 /* Pay Button */
 .btn-confirm {
-    width: 100%;
-    padding: 1rem;
-    background: #2563eb;
-    color: #ffffff;
-    border: none;
-    border-radius: 12px;
-    font-size: 1.05rem;
-    font-weight: 700;
-    cursor: pointer;
-    box-shadow: 0 4px 15px rgba(37, 99, 235, 0.35);
-    transition: all 0.2s;
+  width: 100%;
+  padding: 1rem;
+  background: #2563eb;
+  color: #ffffff;
+  border: none;
+  border-radius: 12px;
+  font-size: 1.05rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(37, 99, 235, 0.35);
+  transition: all 0.2s;
 }
 
 .btn-confirm:hover {
-    background: #1d4ed8;
-    transform: translateY(-1px);
+  background: #1d4ed8;
+  transform: translateY(-1px);
 }
 
 /* Right Sidebar Sticky */
 .fare-row {
-    display: flex;
-    justify-content: space-between;
-    padding: 0.65rem 0;
-    font-size: 0.9rem;
-    color: #64748b;
-    border-bottom: 1px solid #f1f5f9;
+  display: flex;
+  justify-content: space-between;
+  padding: 0.65rem 0;
+  font-size: 0.9rem;
+  color: #64748b;
+  border-bottom: 1px solid #f1f5f9;
 }
 
 .fare-row strong {
-    color: #0f172a;
+  color: #0f172a;
 }
 
 .fare-total {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    margin-top: 1.25rem;
-    padding-top: 1rem;
-    border-top: 2px dashed #cbd5e1;
-    font-size: 1.15rem;
-    font-weight: 700;
-    color: #0f172a;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-top: 1.25rem;
+  padding-top: 1rem;
+  border-top: 2px dashed #cbd5e1;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #0f172a;
 }
 
 .fare-total span:last-child {
-    font-size: 1.4rem;
-    color: #2563eb;
+  font-size: 1.4rem;
+  color: #2563eb;
 }
 
 @media (max-width: 900px) {
-    .checkout-grid {
-        grid-template-columns: 1fr;
-    }
-    .passenger-row,
-    .contact-row {
-        grid-template-columns: 1fr;
-    }
+  .checkout-grid {
+    grid-template-columns: 1fr;
+  }
+  .passenger-row,
+  .contact-row {
+    grid-template-columns: 1fr;
+  }
 }
 /* =====================================
    TICKET CONFIRMATION GLASS STYLES
    ===================================== */
 .ticket-wrapper {
-    max-width: 750px;
-    margin: 2.5rem auto;
-    padding: 0 1rem;
+  max-width: 750px;
+  margin: 2.5rem auto;
+  padding: 0 1rem;
 }
 
 .ticket-glass {
-    background: rgba(255, 255, 255, 0.75);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border: 1px solid rgba(255, 255, 255, 0.9);
-    border-radius: 20px;
-    box-shadow: 0 12px 40px rgba(31, 38, 135, 0.08);
-    overflow: hidden;
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  border-radius: 20px;
+  box-shadow: 0 12px 40px rgba(31, 38, 135, 0.08);
+  overflow: hidden;
 }
 
 .ticket-header {
-    background: linear-gradient(135deg, #2563eb, #1d4ed8);
-    color: #ffffff;
-    padding: 1.5rem 2rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  color: #ffffff;
+  padding: 1.5rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .ticket-header-title {
-    font-size: 1.35rem;
-    font-weight: 700;
-    margin: 0;
+  font-size: 1.35rem;
+  font-weight: 700;
+  margin: 0;
 }
 
 .ticket-header-sub {
-    margin: 0.25rem 0 0;
-    font-size: 0.85rem;
-    opacity: 0.9;
+  margin: 0.25rem 0 0;
+  font-size: 0.85rem;
+  opacity: 0.9;
 }
 
 .ticket-status-badge {
-    background: rgba(34, 197, 94, 0.2);
-    border: 1px solid #22c55e;
-    color: #15803d;
-    padding: 6px 14px;
-    border-radius: 999px;
-    font-size: 0.85rem;
-    font-weight: 700;
-    letter-spacing: 0.02em;
+  background: rgba(34, 197, 94, 0.2);
+  border: 1px solid #22c55e;
+  color: #15803d;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
 }
 
 .ticket-body {
-    padding: 2rem;
+  padding: 2rem;
 }
 
 .pnr-highlight {
-    background: rgba(241, 245, 249, 0.85);
-    border: 1px solid rgba(226, 232, 240, 0.8);
-    border-radius: 12px;
-    padding: 1rem 1.5rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1.5rem;
+  background: rgba(241, 245, 249, 0.85);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  border-radius: 12px;
+  padding: 1rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
 }
 
 .pnr-label {
-    font-size: 0.8rem;
-    color: #64748b;
-    font-weight: 600;
-    display: block;
+  font-size: 0.8rem;
+  color: #64748b;
+  font-weight: 600;
+  display: block;
 }
 
 .pnr-value {
-    font-size: 1.5rem;
-    color: #2563eb;
-    margin: 0;
-    font-weight: 700;
+  font-size: 1.5rem;
+  color: #2563eb;
+  margin: 0;
+  font-weight: 700;
 }
 
 .ticket-meta-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1.25rem;
-    margin-bottom: 1.5rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+  margin-bottom: 1.5rem;
 }
 
 .meta-item-label {
-    font-size: 0.85rem;
-    color: #64748b;
-    display: block;
+  font-size: 0.85rem;
+  color: #64748b;
+  display: block;
 }
 
 .meta-item-val {
-    font-weight: 700;
-    color: #0f172a;
-    margin: 0.25rem 0 0;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0.25rem 0 0;
 }
 
 .meta-item-val.fare {
-    color: #16a34a;
+  color: #16a34a;
 }
 
 .pass-section-title {
-    margin: 1.5rem 0 0.75rem;
-    color: #1e293b;
-    font-size: 1.1rem;
-    font-weight: 700;
+  margin: 1.5rem 0 0.75rem;
+  color: #1e293b;
+  font-size: 1.1rem;
+  font-weight: 700;
 }
 
 .pass-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 0.5rem;
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 0.5rem;
 }
 
 .pass-table th {
-    text-align: left;
-    padding: 0.75rem;
-    color: #64748b;
-    font-size: 0.85rem;
-    font-weight: 600;
-    border-bottom: 2px solid #e2e8f0;
+  text-align: left;
+  padding: 0.75rem;
+  color: #64748b;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border-bottom: 2px solid #e2e8f0;
 }
 
 .pass-table td {
-    padding: 0.85rem 0.75rem;
-    border-bottom: 1px solid rgba(226, 232, 240, 0.8);
-    font-size: 0.95rem;
-    color: #334155;
+  padding: 0.85rem 0.75rem;
+  border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+  font-size: 0.95rem;
+  color: #334155;
 }
 
 .seat-pill {
-    background: #e0f2fe;
-    color: #0284c7;
-    padding: 3px 10px;
-    border-radius: 6px;
-    font-weight: 700;
-    display: inline-block;
+  background: #e0f2fe;
+  color: #0284c7;
+  padding: 3px 10px;
+  border-radius: 6px;
+  font-weight: 700;
+  display: inline-block;
 }
 
 .ticket-actions {
-    display: flex;
-    gap: 1rem;
-    margin-top: 2rem;
+  display: flex;
+  gap: 1rem;
+  margin-top: 2rem;
 }
 
 .btn-print {
-    flex: 1;
-    background: #0f172a;
-    color: #ffffff;
-    padding: 0.9rem;
-    border: none;
-    border-radius: 10px;
-    font-weight: 600;
-    font-size: 0.95rem;
-    cursor: pointer;
-    text-align: center;
-    transition: 0.2s;
+  flex: 1;
+  background: #0f172a;
+  color: #ffffff;
+  padding: 0.9rem;
+  border: none;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  text-align: center;
+  transition: 0.2s;
 }
 
 .btn-print:hover {
-    background: #1e293b;
+  background: #1e293b;
 }
 
 .btn-home {
-    flex: 1;
-    background: #2563eb;
-    color: #ffffff;
-    padding: 0.9rem;
-    border: none;
-    border-radius: 10px;
-    font-weight: 600;
-    font-size: 0.95rem;
-    text-align: center;
-    text-decoration: none;
-    transition: 0.2s;
+  flex: 1;
+  background: #2563eb;
+  color: #ffffff;
+  padding: 0.9rem;
+  border: none;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  text-align: center;
+  text-decoration: none;
+  transition: 0.2s;
 }
 
 .btn-home:hover {
-    background: #1d4ed8;
+  background: #1d4ed8;
 }
 
 /* =====================================================
@@ -2207,7 +2215,9 @@ textarea:focus {
 .train-title-main {
   margin: 10px 0 6px;
   color: #ffffff;
-  font: 700 30px/1.15 "Space Grotesk", sans-serif;
+  font:
+    700 30px/1.15 "Space Grotesk",
+    sans-serif;
 }
 
 .train-no-tag {
@@ -2235,7 +2245,9 @@ textarea:focus {
 .pnr-box-meta h2,
 .date-box-meta h3 {
   margin: 6px 0 0;
-  font: 700 22px "Space Grotesk", sans-serif;
+  font:
+    700 22px "Space Grotesk",
+    sans-serif;
 }
 
 .pnr-box-meta span,
@@ -2260,7 +2272,9 @@ textarea:focus {
 .station-node h4 {
   margin: 7px 0 0;
   color: #0f172a;
-  font: 700 24px "Space Grotesk", sans-serif;
+  font:
+    700 24px "Space Grotesk",
+    sans-serif;
 }
 
 .station-node span {
@@ -2310,7 +2324,9 @@ textarea:focus {
 
 .pass-section-header {
   margin: 0 0 12px;
-  font: 700 18px "Space Grotesk", sans-serif;
+  font:
+    700 18px "Space Grotesk",
+    sans-serif;
 }
 
 .pass-board-table {
@@ -2399,7 +2415,9 @@ textarea:focus {
   color: #ffffff;
   background: #0f172a;
   cursor: pointer;
-  font: 700 13px "DM Sans", sans-serif;
+  font:
+    700 13px "DM Sans",
+    sans-serif;
   text-decoration: none;
 }
 
@@ -2473,14 +2491,14 @@ textarea:focus {
   .user-header,
   .ticket-actions,
   .search-back-link {
-        display: none !important;
-    }
+    display: none !important;
+  }
 
   .ticket-head-banner {
     color: #0f172a;
     background: #ffffff;
     border-bottom: 2px solid #1e3a8a;
-    }
+  }
 
   .train-title-main,
   .train-no-tag {
@@ -2495,46 +2513,46 @@ textarea:focus {
   .journey-info-tiles,
   .pass-board-table tr {
     break-inside: avoid;
-    }
+  }
 }
 /* =====================================
    AVAILABLE TRAINS PAGE STYLES
    ===================================== */
 .trains-container {
-    max-width: 950px;
-    margin: 2rem auto;
-    padding: 0 1rem;
+  max-width: 950px;
+  margin: 2rem auto;
+  padding: 0 1rem;
 }
 
 .train-search-summary {
-    background: rgba(255, 255, 255, 0.7);
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
-    border: 1px solid rgba(255, 255, 255, 0.9);
-    border-radius: 14px;
-    padding: 1.25rem 1.75rem;
-    margin-bottom: 2rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  border-radius: 14px;
+  padding: 1.25rem 1.75rem;
+  margin-bottom: 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
 }
 
 .train-summary-col .summary-label {
-    font-size: 0.85rem;
-    color: #64748b;
-    font-weight: 600;
-    display: block;
+  font-size: 0.85rem;
+  color: #64748b;
+  font-weight: 600;
+  display: block;
 }
 
 .train-summary-col .summary-title {
-    margin: 0.2rem 0 0;
-    color: #0f172a;
-    font-size: 1.15rem;
+  margin: 0.2rem 0 0;
+  color: #0f172a;
+  font-size: 1.15rem;
 }
 
 .train-summary-col .summary-title.date-highlight {
-    color: #2563eb;
+  color: #2563eb;
 }
 
 .coach-route-city {
@@ -2549,142 +2567,144 @@ textarea:focus {
 }
 
 .trains-heading {
-    font-size: 1.25rem;
-    font-weight: 700;
-    margin-bottom: 1.25rem;
-    color: #0f172a;
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 1.25rem;
+  color: #0f172a;
 }
 
 .train-card-item {
-    background: rgba(255, 255, 255, 0.75);
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
-    border: 1px solid rgba(255, 255, 255, 0.9);
-    border-radius: 16px;
-    padding: 1.5rem 1.75rem;
-    margin-bottom: 1.25rem;
-    box-shadow: 0 8px 30px rgba(31, 38, 135, 0.05);
-    display: grid;
-    grid-template-columns: 2fr 3fr 1.5fr;
-    align-items: center;
-    gap: 1.5rem;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  border-radius: 16px;
+  padding: 1.5rem 1.75rem;
+  margin-bottom: 1.25rem;
+  box-shadow: 0 8px 30px rgba(31, 38, 135, 0.05);
+  display: grid;
+  grid-template-columns: 2fr 3fr 1.5fr;
+  align-items: center;
+  gap: 1.5rem;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .train-card-item:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 12px 35px rgba(31, 38, 135, 0.08);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 35px rgba(31, 38, 135, 0.08);
 }
 
 .train-badge-num {
-    background: #e0f2fe;
-    color: #0284c7;
-    padding: 2px 8px;
-    border-radius: 6px;
-    font-size: 0.75rem;
-    font-weight: 700;
-    display: inline-block;
+  background: #e0f2fe;
+  color: #0284c7;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  display: inline-block;
 }
 
 .train-name-title {
-    margin: 0.4rem 0 0.2rem;
-    font-size: 1.1rem;
-    color: #0f172a;
-    font-weight: 700;
+  margin: 0.4rem 0 0.2rem;
+  font-size: 1.1rem;
+  color: #0f172a;
+  font-weight: 700;
 }
 
 .train-sub-text {
-    font-size: 0.8rem;
-    color: #64748b;
+  font-size: 0.8rem;
+  color: #64748b;
 }
 
 .train-time-flow {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  text-align: center;
 }
 
 .time-box h4 {
-    font-size: 1.25rem;
-    font-weight: 700;
-    margin: 0;
-    color: #0f172a;
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 0;
+  color: #0f172a;
 }
 
 .time-box span {
-    font-size: 0.8rem;
-    color: #64748b;
+  font-size: 0.8rem;
+  color: #64748b;
 }
 
 .duration-indicator {
-    position: relative;
-    flex: 1;
-    margin: 0 1.25rem;
-    text-align: center;
-    font-size: 0.75rem;
-    font-weight: 600;
-    color: #2563eb;
+  position: relative;
+  flex: 1;
+  margin: 0 1.25rem;
+  text-align: center;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #2563eb;
 }
 
 .duration-line {
-    height: 2px;
-    background: #cbd5e1;
-    position: relative;
-    margin-top: 4px;
+  height: 2px;
+  background: #cbd5e1;
+  position: relative;
+  margin-top: 4px;
 }
 
 .train-action-cell {
-    text-align: right;
+  text-align: right;
 }
 
 .btn-select-coach {
-    background: linear-gradient(135deg, #2563eb, #1d4ed8);
-    color: #ffffff;
-    padding: 0.8rem 1.25rem;
-    border-radius: 10px;
-    text-decoration: none;
-    font-weight: 600;
-    font-size: 0.95rem;
-    display: inline-block;
-    text-align: center;
-    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
-    transition: all 0.2s ease;
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  color: #ffffff;
+  padding: 0.8rem 1.25rem;
+  border-radius: 10px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.95rem;
+  display: inline-block;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+  transition: all 0.2s ease;
 }
 
 .btn-select-coach:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 6px 18px rgba(37, 99, 235, 0.35);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(37, 99, 235, 0.35);
 }
 
 .no-trains-card {
-    text-align: center;
-    padding: 3rem 1rem;
-    background: rgba(255, 255, 255, 0.75);
-    backdrop-filter: blur(14px);
-    border-radius: 16px;
-    border: 1px solid rgba(255, 255, 255, 0.9);
+  text-align: center;
+  padding: 3rem 1rem;
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(14px);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.9);
 }
 
 .no-trains-card p {
-    font-size: 1.1rem;
-    color: #64748b;
-    margin-bottom: 1.25rem;
+  font-size: 1.1rem;
+  color: #64748b;
+  margin-bottom: 1.25rem;
 }
 
 @media (max-width: 768px) {
-    .train-card-item {
-        grid-template-columns: 1fr;
-        gap: 1rem;
-    }
-    .train-action-cell {
-        text-align: left;
-    }
-    .train-search-summary {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 0.75rem;
-    }
+  .train-card-item {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  .train-action-cell {
+    text-align: left;
+  }
+  .train-search-summary {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
 }
 /* rupankar  */
 /* =====================================================
@@ -2693,839 +2713,629 @@ textarea:focus {
 
 .profile-page,
 .wallet-page {
+  background: #f8fafc;
 
-    background: #F8FAFC;
+  min-height: 80vh;
 
-    min-height: 80vh;
-
-    padding: 45px 20px;
-
+  padding: 45px 20px;
 }
-
 
 .profile-container,
 .wallet-container {
+  max-width: 1100px;
 
-    max-width: 1100px;
-
-    margin: 0 auto;
-
+  margin: 0 auto;
 }
-
 
 .profile-page-heading,
 .wallet-page-heading {
-
-    margin-bottom: 25px;
-
+  margin-bottom: 25px;
 }
-
 
 .profile-eyebrow,
 .wallet-eyebrow {
+  color: #2563eb;
 
-    color: #2563EB;
+  font-size: 13px;
 
-    font-size: 13px;
+  font-weight: 700;
 
-    font-weight: 700;
+  letter-spacing: 1px;
 
-    letter-spacing: 1px;
-
-    margin-bottom: 7px;
-
+  margin-bottom: 7px;
 }
-
 
 .profile-page-heading h1,
 .wallet-page-heading h1 {
+  color: #0f172a;
 
-    color: #0F172A;
+  font-size: 32px;
 
-    font-size: 32px;
-
-    margin-bottom: 7px;
-
+  margin-bottom: 7px;
 }
-
 
 .profile-page-heading p:last-child,
 .wallet-page-heading p:last-child {
-
-    color: #64748B;
-
+  color: #64748b;
 }
-
 
 /* =====================================================
    PROFILE CARD
 ===================================================== */
 
 .profile-main-card {
+  background: #ffffff;
 
-    background: #FFFFFF;
+  border: 1px solid #e2e8f0;
 
-    border: 1px solid #E2E8F0;
+  border-radius: 16px;
 
-    border-radius: 16px;
-
-    padding: 30px;
-
+  padding: 30px;
 }
-
 
 .profile-user-header {
+  display: flex;
 
-    display: flex;
+  align-items: center;
 
-    align-items: center;
+  gap: 18px;
 
-    gap: 18px;
+  padding-bottom: 25px;
 
-    padding-bottom: 25px;
-
-    border-bottom: 1px solid #E2E8F0;
-
+  border-bottom: 1px solid #e2e8f0;
 }
-
 
 .profile-avatar {
+  width: 72px;
 
-    width: 72px;
+  height: 72px;
 
-    height: 72px;
+  border-radius: 50%;
 
-    border-radius: 50%;
+  background: #dbeafe;
 
-    background: #DBEAFE;
+  color: #2563eb;
 
-    color: #2563EB;
+  display: flex;
 
-    display: flex;
+  align-items: center;
 
-    align-items: center;
+  justify-content: center;
 
-    justify-content: center;
+  font-size: 25px;
 
-    font-size: 25px;
-
-    font-weight: 700;
-
+  font-weight: 700;
 }
-
 
 .profile-user-header h2 {
+  color: #0f172a;
 
-    color: #0F172A;
-
-    margin-bottom: 5px;
-
+  margin-bottom: 5px;
 }
-
 
 .profile-user-header p {
-
-    color: #64748B;
-
+  color: #64748b;
 }
-
 
 /* =====================================================
    PROFILE INFORMATION
 ===================================================== */
 
 .profile-information {
+  display: grid;
 
-    display: grid;
+  grid-template-columns: repeat(2, 1fr);
 
-    grid-template-columns:
-        repeat(2, 1fr);
+  gap: 16px;
 
-    gap: 16px;
-
-    margin-top: 25px;
-
+  margin-top: 25px;
 }
-
 
 .profile-info-item {
+  border: 1px solid #e2e8f0;
 
-    border: 1px solid #E2E8F0;
+  border-radius: 10px;
 
-    border-radius: 10px;
-
-    padding: 17px;
-
+  padding: 17px;
 }
-
 
 .profile-info-item span {
+  display: block;
 
-    display: block;
+  color: #64748b;
 
-    color: #64748B;
+  font-size: 13px;
 
-    font-size: 13px;
-
-    margin-bottom: 7px;
-
+  margin-bottom: 7px;
 }
-
 
 .profile-info-item strong {
-
-    color: #0F172A;
-
+  color: #0f172a;
 }
-
 
 .wallet-info strong {
-
-    color: #16A34A;
-
+  color: #16a34a;
 }
-
 
 /* =====================================================
    PROFILE BUTTONS
 ===================================================== */
 
 .profile-buttons {
+  display: flex;
 
-    display: flex;
+  flex-wrap: wrap;
 
-    flex-wrap: wrap;
+  gap: 12px;
 
-    gap: 12px;
-
-    margin-top: 28px;
-
+  margin-top: 28px;
 }
-
 
 .profile-primary-btn,
 .profile-secondary-btn,
 .profile-danger-btn {
+  border: none;
 
-    border: none;
+  border-radius: 8px;
 
-    border-radius: 8px;
+  padding: 11px 18px;
 
-    padding: 11px 18px;
+  text-decoration: none;
 
-    text-decoration: none;
+  cursor: pointer;
 
-    cursor: pointer;
+  font-size: 14px;
 
-    font-size: 14px;
-
-    display: inline-block;
-
+  display: inline-block;
 }
-
 
 .profile-primary-btn {
+  background: #2563eb;
 
-    background: #2563EB;
-
-    color: #FFFFFF;
-
+  color: #ffffff;
 }
-
 
 .profile-primary-btn:hover {
-
-    background: #1D4ED8;
-
+  background: #1d4ed8;
 }
-
 
 .profile-secondary-btn {
+  background: #dbeafe;
 
-    background: #DBEAFE;
-
-    color: #2563EB;
-
+  color: #2563eb;
 }
-
 
 .profile-secondary-btn:hover {
-
-    background: #bfdbfe;
-
+  background: #bfdbfe;
 }
-
 
 .profile-danger-btn {
+  background: #fee2e2;
 
-    background: #FEE2E2;
-
-    color: #DC2626;
-
+  color: #dc2626;
 }
-
 
 /* =====================================================
    PROFILE WALLET QUICK CARD
 ===================================================== */
 
 .profile-wallet-card {
+  margin-top: 20px;
 
-    margin-top: 20px;
+  background: #1e3a8a;
 
-    background: #1E3A8A;
+  color: #ffffff;
 
-    color: #FFFFFF;
+  border-radius: 16px;
 
-    border-radius: 16px;
+  padding: 25px;
 
-    padding: 25px;
+  display: flex;
 
-    display: flex;
+  align-items: center;
 
-    align-items: center;
-
-    justify-content: space-between;
-
+  justify-content: space-between;
 }
-
 
 .profile-wallet-card p {
+  opacity: 0.8;
 
-    opacity: .8;
-
-    margin-bottom: 5px;
-
+  margin-bottom: 5px;
 }
-
 
 .profile-wallet-card h2 {
-
-    font-size: 30px;
-
+  font-size: 30px;
 }
-
 
 .profile-wallet-card a {
+  color: #1e3a8a;
 
-    color: #1E3A8A;
+  background: #dbeafe;
 
-    background: #DBEAFE;
+  padding: 11px 17px;
 
-    padding: 11px 17px;
+  border-radius: 8px;
 
-    border-radius: 8px;
+  text-decoration: none;
 
-    text-decoration: none;
-
-    font-weight: 600;
-
+  font-weight: 600;
 }
-
 
 /* =====================================================
    PROFILE MODAL
 ===================================================== */
 
 .profile-modal {
+  display: none;
 
-    display: none;
+  position: fixed;
 
-    position: fixed;
+  inset: 0;
 
-    inset: 0;
+  background: rgba(15, 23, 42, 0.55);
 
-    background: rgba(15, 23, 42, .55);
+  align-items: center;
 
-    align-items: center;
+  justify-content: center;
 
-    justify-content: center;
+  padding: 20px;
 
-    padding: 20px;
-
-    z-index: 9999;
-
+  z-index: 9999;
 }
-
 
 .profile-modal-box {
+  background: #ffffff;
 
-    background: #FFFFFF;
+  width: 100%;
 
-    width: 100%;
+  max-width: 450px;
 
-    max-width: 450px;
+  border-radius: 14px;
 
-    border-radius: 14px;
-
-    padding: 25px;
-
+  padding: 25px;
 }
-
 
 .modal-header {
+  display: flex;
 
-    display: flex;
+  justify-content: space-between;
 
-    justify-content: space-between;
+  align-items: center;
 
-    align-items: center;
-
-    margin-bottom: 20px;
-
+  margin-bottom: 20px;
 }
-
 
 .modal-header button {
+  border: none;
 
-    border: none;
+  background: transparent;
 
-    background: transparent;
+  font-size: 28px;
 
-    font-size: 28px;
+  cursor: pointer;
 
-    cursor: pointer;
-
-    color: #64748B;
-
+  color: #64748b;
 }
-
 
 .profile-modal-box label {
+  display: block;
 
-    display: block;
+  margin-top: 15px;
 
-    margin-top: 15px;
+  margin-bottom: 7px;
 
-    margin-bottom: 7px;
+  color: #0f172a;
 
-    color: #0F172A;
-
-    font-weight: 600;
-
+  font-weight: 600;
 }
-
 
 .profile-modal-box input {
+  width: 100%;
 
-    width: 100%;
+  padding: 12px;
 
-    padding: 12px;
+  border: 1px solid #e2e8f0;
 
-    border: 1px solid #E2E8F0;
+  border-radius: 7px;
 
-    border-radius: 7px;
-
-    outline: none;
-
+  outline: none;
 }
-
 
 .profile-modal-box input:focus {
-
-    border-color: #2563EB;
-
+  border-color: #2563eb;
 }
-
 
 .profile-modal-box .profile-primary-btn {
+  margin-top: 20px;
 
-    margin-top: 20px;
-
-    width: 100%;
-
+  width: 100%;
 }
-
 
 /* =====================================================
    WALLET BALANCE
 ===================================================== */
 
 .wallet-balance-card {
+  background: #1e3a8a;
 
-    background: #1E3A8A;
+  color: #ffffff;
 
-    color: #FFFFFF;
+  border-radius: 16px;
 
-    border-radius: 16px;
+  padding: 30px;
 
-    padding: 30px;
+  display: flex;
 
-    display: flex;
+  justify-content: space-between;
 
-    justify-content: space-between;
+  align-items: center;
 
-    align-items: center;
-
-    margin-bottom: 20px;
-
+  margin-bottom: 20px;
 }
-
 
 .wallet-balance-card span {
-
-    opacity: .8;
-
+  opacity: 0.8;
 }
-
 
 .wallet-balance-card h2 {
+  font-size: 40px;
 
-    font-size: 40px;
-
-    margin-top: 8px;
-
+  margin-top: 8px;
 }
-
 
 .wallet-balance-icon {
+  width: 65px;
 
-    width: 65px;
+  height: 65px;
 
-    height: 65px;
+  border-radius: 50%;
 
-    border-radius: 50%;
+  background: #dbeafe;
 
-    background: #DBEAFE;
+  color: #2563eb;
 
-    color: #2563EB;
+  display: flex;
 
-    display: flex;
+  align-items: center;
 
-    align-items: center;
+  justify-content: center;
 
-    justify-content: center;
+  font-size: 28px;
 
-    font-size: 28px;
-
-    font-weight: bold;
-
+  font-weight: bold;
 }
-
 
 /* =====================================================
    WALLET CARD
 ===================================================== */
 
 .wallet-card {
+  background: #ffffff;
 
-    background: #FFFFFF;
+  border: 1px solid #e2e8f0;
 
-    border: 1px solid #E2E8F0;
+  border-radius: 16px;
 
-    border-radius: 16px;
+  padding: 25px;
 
-    padding: 25px;
-
-    margin-bottom: 20px;
-
+  margin-bottom: 20px;
 }
-
 
 .wallet-card-heading {
-
-    margin-bottom: 20px;
-
+  margin-bottom: 20px;
 }
-
 
 .wallet-card-heading h2 {
+  color: #0f172a;
 
-    color: #0F172A;
-
-    margin-bottom: 5px;
-
+  margin-bottom: 5px;
 }
-
 
 .wallet-card-heading p {
-
-    color: #64748B;
-
+  color: #64748b;
 }
-
 
 /* =====================================================
    WALLET AMOUNT BUTTONS
 ===================================================== */
 
 .wallet-amount-form {
+  display: flex;
 
-    display: flex;
+  flex-wrap: wrap;
 
-    flex-wrap: wrap;
-
-    gap: 12px;
-
+  gap: 12px;
 }
-
 
 .wallet-amount-btn {
+  border: 1px solid #bfdbfe;
 
-    border: 1px solid #bfdbfe;
+  background: #dbeafe;
 
-    background: #DBEAFE;
+  color: #2563eb;
 
-    color: #2563EB;
+  border-radius: 8px;
 
-    border-radius: 8px;
+  padding: 12px 22px;
 
-    padding: 12px 22px;
+  cursor: pointer;
 
-    cursor: pointer;
-
-    font-weight: 600;
-
+  font-weight: 600;
 }
-
 
 .wallet-amount-btn:hover {
+  background: #2563eb;
 
-    background: #2563EB;
-
-    color: #FFFFFF;
-
+  color: #ffffff;
 }
-
 
 /* =====================================================
    CUSTOM AMOUNT
 ===================================================== */
 
 .wallet-custom-form {
+  display: flex;
 
-    display: flex;
+  gap: 10px;
 
-    gap: 10px;
-
-    margin-top: 15px;
-
+  margin-top: 15px;
 }
-
 
 .wallet-custom-form input {
+  flex: 1;
 
-    flex: 1;
+  padding: 12px;
 
-    padding: 12px;
+  border: 1px solid #e2e8f0;
 
-    border: 1px solid #E2E8F0;
+  border-radius: 8px;
 
-    border-radius: 8px;
-
-    outline: none;
-
+  outline: none;
 }
-
 
 .wallet-custom-form input:focus {
-
-    border-color: #2563EB;
-
+  border-color: #2563eb;
 }
-
 
 .wallet-add-btn {
+  background: #2563eb;
 
-    background: #2563EB;
+  color: #ffffff;
 
-    color: #FFFFFF;
+  border: none;
 
-    border: none;
+  border-radius: 8px;
 
-    border-radius: 8px;
+  padding: 12px 20px;
 
-    padding: 12px 20px;
-
-    cursor: pointer;
-
+  cursor: pointer;
 }
-
 
 .wallet-add-btn:hover {
-
-    background: #1D4ED8;
-
+  background: #1d4ed8;
 }
-
 
 /* =====================================================
    TRANSACTION TABLE
 ===================================================== */
 
 .wallet-table-wrapper {
-
-    overflow-x: auto;
-
+  overflow-x: auto;
 }
-
 
 .wallet-table {
+  width: 100%;
 
-    width: 100%;
-
-    border-collapse: collapse;
-
+  border-collapse: collapse;
 }
-
 
 .wallet-table th {
+  background: #dbeafe;
 
-    background: #DBEAFE;
+  color: #1e3a8a;
 
-    color: #1E3A8A;
+  text-align: left;
 
-    text-align: left;
-
-    padding: 14px;
-
+  padding: 14px;
 }
-
 
 .wallet-table td {
+  padding: 14px;
 
-    padding: 14px;
+  border-bottom: 1px solid #e2e8f0;
 
-    border-bottom: 1px solid #E2E8F0;
-
-    color: #0F172A;
-
+  color: #0f172a;
 }
-
 
 .wallet-credit {
+  color: #16a34a;
 
-    color: #16A34A;
-
-    font-weight: 700;
-
+  font-weight: 700;
 }
-
 
 .wallet-debit {
+  color: #dc2626;
 
-    color: #DC2626;
-
-    font-weight: 700;
-
+  font-weight: 700;
 }
-
 
 .wallet-empty {
+  text-align: center;
 
-    text-align: center;
+  padding: 30px !important;
 
-    padding: 30px !important;
-
-    color: #64748B !important;
-
+  color: #64748b !important;
 }
-
 
 /* =====================================================
    WALLET INFO
 ===================================================== */
 
 .wallet-info-box {
+  background: #dbeafe;
 
-    background: #DBEAFE;
+  border: 1px solid #bfdbfe;
 
-    border: 1px solid #bfdbfe;
+  border-radius: 12px;
 
-    border-radius: 12px;
+  padding: 18px;
 
-    padding: 18px;
-
-    color: #1E3A8A;
-
+  color: #1e3a8a;
 }
-
 
 .wallet-info-box p {
+  margin-top: 5px;
 
-    margin-top: 5px;
-
-    color: #64748B;
-
+  color: #64748b;
 }
-
 
 /* =====================================================
    MOBILE
 ===================================================== */
 
 @media (max-width: 700px) {
+  .profile-page,
+  .wallet-page {
+    padding: 30px 15px;
+  }
 
+  .profile-information {
+    grid-template-columns: 1fr;
+  }
 
-    .profile-page,
-    .wallet-page {
+  .profile-buttons {
+    flex-direction: column;
+  }
 
-        padding: 30px 15px;
+  .profile-primary-btn,
+  .profile-secondary-btn,
+  .profile-danger-btn {
+    width: 100%;
 
-    }
+    text-align: center;
+  }
 
+  .profile-wallet-card {
+    flex-direction: column;
 
-    .profile-information {
+    align-items: flex-start;
 
-        grid-template-columns: 1fr;
+    gap: 18px;
+  }
 
-    }
+  .wallet-balance-card {
+    padding: 22px;
+  }
 
+  .wallet-balance-card h2 {
+    font-size: 30px;
+  }
 
-    .profile-buttons {
+  .wallet-custom-form {
+    flex-direction: column;
+  }
 
-        flex-direction: column;
-
-    }
-
-
-    .profile-primary-btn,
-    .profile-secondary-btn,
-    .profile-danger-btn {
-
-        width: 100%;
-
-        text-align: center;
-
-    }
-
-
-    .profile-wallet-card {
-
-        flex-direction: column;
-
-        align-items: flex-start;
-
-        gap: 18px;
-
-    }
-
-
-    .wallet-balance-card {
-
-        padding: 22px;
-
-    }
-
-
-    .wallet-balance-card h2 {
-
-        font-size: 30px;
-
-    }
-
-
-    .wallet-custom-form {
-
-        flex-direction: column;
-
-    }
-
-
-    .wallet-custom-form button {
-
-        width: 100%;
-
-    }
-
+  .wallet-custom-form button {
+    width: 100%;
+  }
 }
