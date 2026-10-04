@@ -1,4 +1,3 @@
-```markdown
 # 🚆 RailEase - Railway Ticket Booking System
 
 RailEase is a PHP and MySQL based Railway Ticket Booking System developed as a six-member college project.
@@ -624,5 +623,3 @@ All sample trains, stations, users, bookings, and other data are intended for de
 
 **A collaborative academic project led and coordinated by Sayantan Hazra (L).**
 ```
-
-You can paste that **directly into `readme.md`** and commit/push it to your repository. Your current GitHub README is only about 146 lines, so this will give the repository a much more complete project-documentation and contribution section. :chatgpt-content-reference{index="1"}
