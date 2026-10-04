@@ -1,146 +1,630 @@
-# RailEase - Railway Ticket Booking System
+Yes. Replace the contents of your current `readme.md` with the following. I also corrected the setup references to match the repository structure you currently have, including `config/schema.sql` and `railway-booking`. [GitHub](https://github.com/sayantan-hazra/railway_booking/blob/main/readme.md)
 
-RailEase is a PHP and MySQL railway ticket-booking application developed as a six-member college project. It provides a complete booking experience for passengers and a management interface for railway administrators, while keeping the workflow simple and practical for everyday use.
+```markdown
+# 🚆 RailEase - Railway Ticket Booking System
 
-## Project Overview
+RailEase is a PHP and MySQL based Railway Ticket Booking System developed as a six-member college project.
 
-RailEase supports the complete journey from account creation to ticket management:
+The project provides a complete railway booking workflow for users along with an administrative management system. It includes train searching, coach and seat selection, meal selection, wallet-based payment, ticket generation, booking management, user support, and an admin panel.
+
+> 🎓 **Academic Project - Developed for educational and demonstration purposes.**
+
+---
+
+## 📌 Project Overview
+
+RailEase follows a complete railway ticket booking workflow:
 
 ```text
-Sign Up -> Login -> Home -> Search Train -> Select Coach -> Select Seat
--> Select Meal -> Pay from Wallet -> Ticket -> Manage Booking
+Sign Up
+   ↓
+Login
+   ↓
+Home
+   ↓
+Search Train
+   ↓
+Select Train
+   ↓
+Select Coach
+   ↓
+Select Seat
+   ↓
+Select Meal
+   ↓
+Pay from Wallet
+   ↓
+Generate Ticket / PNR
+   ↓
+Manage Booking
 ```
 
-Administrators can manage the railway data and monitor customer activity:
+### Admin Workflow
 
 ```text
-Admin Login -> Manage Trains/Coaches/Seats -> View Bookings
--> Manage Support Tickets
+Admin Login
+   ↓
+Admin Dashboard
+   ↓
+Manage Trains
+   ↓
+Manage Coaches
+   ↓
+Manage Seats
+   ↓
+View Bookings
+   ↓
+Manage Support Tickets
 ```
 
-## Features
+---
 
-### User Features
+# ✨ Features
 
-- Create an account and securely log in
-- Search available trains
-- View train and coach information
-- Select a coach and available seat
-- Select meal preferences during booking
-- Pay for bookings using a wallet balance
-- View booking confirmation and ticket details
-- Manage existing bookings
-- Access profile, wallet, and support sections
+## 👤 User Features
 
-### Admin Features
+- User registration
+- Secure user login and logout
+- User profile
+- Search trains
+- View train details
+- Select coach
+- Select available seat
+- Select meal
+- Wallet-based payment
+- Booking confirmation
+- PNR generation
+- Ticket generation
+- View booking history
+- Manage bookings
+- Cancel bookings
+- Wallet balance
+- Wallet transactions
+- Customer support
 
-- Log in through the admin panel
-- View dashboard information
-- Add, update, and manage trains
-- Manage coaches and seat availability
-- View and manage passenger bookings
-- Review and manage support tickets
+---
 
-## Technology Stack
+## 👑 Admin Features
+
+- Admin login
+- Admin dashboard
+- Train management
+- Coach management
+- Seat management
+- View passenger bookings
+- Manage railway data
+- Manage support tickets
+- Monitor user activity
+- Database administration
+
+---
+
+# 💻 Technology Stack
 
 | Layer | Technology |
-| --- | --- |
-| Frontend | HTML, CSS, JavaScript, Bootstrap |
+|---|---|
+| Frontend | HTML5, CSS3, JavaScript, Bootstrap |
 | Backend | PHP |
 | Database | MySQL |
-| Local environment | XAMPP |
-| Web server | Apache |
+| Database Management | phpMyAdmin |
+| Local Server | XAMPP |
+| Web Server | Apache |
+| Version Control | Git |
+| Repository | GitHub |
 
-## Project Structure
+---
+
+# 🗄️ Database
+
+The project uses MySQL with the following database:
+
+```text
+railway_booking
+```
+
+The database contains tables for:
+
+- Users
+- Stations
+- Trains
+- Train Stops
+- Coaches
+- Seats
+- Meals
+- Bookings
+- Wallets
+- Wallet Transactions
+- Support Tickets
+
+The database schema is maintained inside the project repository.
+
+---
+
+# 📂 Project Structure
 
 ```text
 railway-booking/
-├── admin/                  # Admin dashboard and management pages
+│
+├── admin/
+│   └── Admin dashboard and management pages
+│
 ├── assets/
-│   ├── css/                # Application stylesheets
-│   ├── images/             # Images and visual assets
-│   └── js/                 # Client-side JavaScript
-├── auth/                   # Sign-up, login, and logout pages
-├── booking/                # Train search and ticket-booking workflow
-├── config/                 # Database configuration
-├── includes/               # Shared layout and authentication files
-├── user/                   # User home, profile, wallet, and support pages
-├── index.php               # Application entry point
-└── readme.md               # Project documentation
+│   ├── css/
+│   ├── images/
+│   └── js/
+│
+├── auth/
+│   ├── Login
+│   ├── Signup
+│   └── Logout
+│
+├── booking/
+│   └── Train search and booking workflow
+│
+├── config/
+│   ├── db.php
+│   └── schema.sql
+│
+├── includes/
+│   └── Shared PHP files
+│
+├── user/
+│   ├── Profile
+│   ├── Wallet
+│   ├── Bookings
+│   └── Support
+│
+├── index.php
+└── readme.md
 ```
 
-## Requirements
+---
 
-- XAMPP with Apache and MySQL
-- PHP supported by the installed XAMPP version
-- A modern web browser
-- MySQL database configured for the application
+# ⚙️ Requirements
 
-## Installation and Setup
+Before running RailEase, install:
 
-1. Install and open XAMPP.
-2. Start the **Apache** and **MySQL** modules.
-3. Place the project folder inside XAMPP's `htdocs` directory:
+- XAMPP
+- Apache
+- MySQL
+- PHP
+- phpMyAdmin
+- Modern web browser
+- Git (optional)
 
-	```text
-	C:\xampp\htdocs\railway-booking
-	```
+---
 
-4. Create the project database in phpMyAdmin.
-6. Import `config/schema.sql` to create the tables and a local demonstration admin account.
-6. Update the database credentials in `config/db.php` to match your local MySQL setup.
-7. Open the application in a browser:
+# 🚀 Installation & Setup
 
-	```text
-	http://localhost/railway-booking/
-	```
+## 1. Install XAMPP
 
-### Admin demonstration login
+Download and install XAMPP.
 
-Open `http://localhost/railway-booking/admin/login.php` after importing the schema:
+Open the XAMPP Control Panel and start:
 
-- Username: `admin`
-- Password: `Admin@123`
+```text
+Apache
+MySQL
+```
 
-Change or remove this local demonstration account before deploying outside XAMPP.
+---
 
-## Application Workflow
+## 2. Place the Project in htdocs
 
-### Passenger Workflow
+Copy the project folder into:
 
-1. Register a new account or log in.
-2. Search for a train using the available journey details.
-3. Choose a train and coach.
-4. Select an available seat.
-5. Select a meal, if required.
-6. Complete payment using the wallet.
-7. Review the generated ticket and confirmation.
-8. Manage the booking later from the user section.
+```text
+C:\xampp\htdocs\
+```
 
-### Administrator Workflow
+For example:
 
-1. Log in through the admin section.
-2. Maintain train, coach, and seat records.
-3. Review passenger bookings.
-4. Respond to and manage support tickets.
+```text
+C:\xampp\htdocs\railway-booking
+```
 
-## Team Contribution
+---
 
-This project is designed and developed by a six-member team. Responsibilities can be distributed across the following areas:
+## 3. Create the Database
 
-| Area | Responsibility |
-| --- | --- |
-| Project coordination | Planning, integration, and documentation |
-| Frontend development | HTML, CSS, Bootstrap, and responsive layouts |
-| JavaScript development | Client-side validation and interactive behavior |
-| Backend development | PHP pages, authentication, and application logic |
-| Database development | MySQL schema, queries, and data management |
-| Testing and deployment | Testing, debugging, XAMPP setup, and deployment checks |
+Open phpMyAdmin:
 
-## Project Objective
+```text
+http://localhost/phpmyadmin/
+```
 
-The objective of RailEase is to demonstrate how a railway reservation platform can be designed using core web technologies. The project brings together user authentication, train and seat management, wallet-based payment, booking confirmation, and administrative support management in one application.
+Create a database named:
 
-## Academic Project
+```text
+railway_booking
+```
 
-RailEase is developed for academic purposes as a PHP, MySQL, and cloud-computing college project. It is intended for local demonstration and learning and is not a production railway reservation service.
+---
+
+## 4. Import the SQL File
+
+Open the `railway_booking` database in phpMyAdmin.
+
+Go to:
+
+```text
+Import
+```
+
+Select:
+
+```text
+config/schema.sql
+```
+
+and import it.
+
+The SQL file creates the required tables and development/demo data.
+
+---
+
+## 5. Configure Database Connection
+
+Open:
+
+```text
+config/db.php
+```
+
+Configure the database according to your XAMPP setup.
+
+Typical XAMPP configuration:
+
+```text
+Host: localhost
+Username: root
+Password:
+Database: railway_booking
+```
+
+---
+
+## 6. Run the Project
+
+Open your browser and visit:
+
+```text
+http://localhost/railway-booking/
+```
+
+---
+
+# 🔐 Admin Login
+
+For local academic demonstration:
+
+```text
+Username: admin
+Password: Admin@123
+```
+
+Admin login page:
+
+```text
+http://localhost/railway-booking/admin/login.php
+```
+
+> ⚠️ The above credentials are intended only for local development and academic demonstration. Change or remove the demo account before deploying the project publicly.
+
+---
+
+# 🔄 Application Workflow
+
+## Passenger Workflow
+
+1. Register a new account.
+2. Login to the system.
+3. Search for available trains.
+4. Select the desired train.
+5. Select a coach.
+6. Select an available seat.
+7. Select a meal preference.
+8. Pay using the wallet.
+9. Generate the booking confirmation and PNR.
+10. View or print the ticket.
+11. Manage the booking from the user section.
+
+---
+
+## Administrator Workflow
+
+1. Login through the admin panel.
+2. Access the admin dashboard.
+3. Manage train information.
+4. Manage coaches.
+5. Manage seats.
+6. View passenger bookings.
+7. Manage support tickets.
+8. Maintain railway-related data.
+
+---
+
+# 👥 Team Contribution
+
+RailEase was developed by a six-member team.
+
+The project follows a modular development approach where every member was assigned specific responsibilities.
+
+However, the **overall project concept, architecture, database, administration system, repository management, integration, and technical direction were led by the Project Leader.**
+
+---
+
+## 👑 1. Sayantan Hazra (L)
+
+### Project Leader & Lead Developer
+
+**Major Responsibilities:**
+
+- 💡 Original project idea and overall concept
+- 👑 Project leadership
+- 🧠 Overall system planning and architecture
+- 🗄️ Complete database design
+- 💾 SQL schema development
+- 👑 Complete Admin Panel development
+- 🔐 Admin authentication and authorization
+- 🚆 Railway/train data management
+- 🪑 Coach and seat data management
+- 🗃️ Database relationships and queries
+- 🔧 Git and GitHub repository management
+- 🔀 Code integration
+- 🧪 Database testing
+- 🐛 Overall debugging
+- 🔧 Technical troubleshooting
+- 🤝 Technical assistance to team members
+- 📋 Overall project structure and organization
+- 🚀 Final project integration
+- 📌 Overall supervision of the project
+
+### Leadership Contribution
+
+> The overall idea and technical direction of RailEase were initiated and led by **Sayantan Hazra (L)**. He was responsible for the overall architecture, database and SQL implementation, complete administration system, Git/GitHub management, integration of team modules, technical guidance, and final supervision of the project.
+
+---
+
+# 🎨 2. Sayantan Pal
+
+### Frontend & Booking Flow Developer
+
+**Responsibilities:**
+
+- 🏠 Homepage UI development
+- 🎨 Frontend design
+- 🔎 Train search interface
+- 🚆 Train selection interface
+- 🪑 Coach selection
+- 💺 Seat selection
+- 🍱 Meal selection
+- 🎟️ Booking workflow
+- 🎫 Ticket generation workflow
+- 🧪 Frontend testing
+- 🤝 Support during project integration
+
+---
+
+# 🎨 3. Sayan Sur
+
+### Frontend & Booking Flow Developer
+
+**Responsibilities:**
+
+- 🏠 Homepage UI development
+- 🎨 User interface implementation
+- 🔎 Train search
+- 🚆 Train selection workflow
+- 🪑 Coach selection
+- 💺 Seat selection
+- 🍱 Meal selection
+- 🎟️ Search-to-booking workflow
+- 🎫 Ticket generation
+- 🧪 Testing and debugging
+- 🤝 Frontend integration support
+
+---
+
+# 🔐 4. Saikat Jana
+
+### Authentication & Booking Management Developer
+
+**Responsibilities:**
+
+- 🔑 Login system
+- 📝 Signup system
+- 🚪 Logout functionality
+- 🔐 Authentication
+- 👤 Session management
+- 🎫 Manage Booking
+- 📋 Booking history
+- ❌ Booking cancellation
+- 🧪 Authentication testing
+- 🐛 Debugging authentication and booking-management modules
+- 🤝 Integration support
+
+---
+
+# 👤 5. Rupankar Sarkar
+
+### Profile, Wallet & Documentation
+
+**Responsibilities:**
+
+- 👤 User profile page
+- ✏️ Profile management
+- 💰 Wallet interface
+- 💳 Wallet balance
+- 📊 Wallet transaction display
+- 📑 PPT preparation
+- 📝 Project documentation support
+- 🧪 Testing
+- 🤝 Assistance to other team members
+- 🎤 Presentation support
+
+---
+
+# 🎫 6. Rupak Patra
+
+### Support & Ticket Developer
+
+**Responsibilities:**
+
+- 🆘 Support page
+- 💬 Customer support functionality
+- 🎫 Ticket printout
+- 🧾 Ticket formatting
+- 📄 Ticket details display
+- 🖨️ Print-friendly ticket
+- 🧪 Testing
+- 🐛 Debugging
+- 🤝 Assistance to other team members
+
+---
+
+# 📊 Team Contribution Summary
+
+| Member | Role | Main Contribution |
+|---|---|---|
+| 👑 **Sayantan Hazra (L)** | **Project Leader & Lead Developer** | **Project idea, architecture, Admin, Database/SQL, Git/GitHub, integration, supervision** |
+| **Sayantan Pal** | Frontend & Booking | Homepage + Train Search → Booking → Ticket |
+| **Sayan Sur** | Frontend & Booking | Homepage + Train Search → Booking → Ticket |
+| **Saikat Jana** | Authentication | Login + Signup + Manage Booking |
+| **Rupankar Sarkar** | User Module | Profile + Wallet + PPT + Team Support |
+| **Rupak Patra** | Support Module | Support Page + Ticket Printout + Team Support |
+
+---
+
+# 🤝 Collaboration
+
+Although each member had specific responsibilities, the project was developed collaboratively.
+
+Team members helped each other with:
+
+- Debugging
+- Testing
+- PHP integration
+- Database connectivity
+- UI integration
+- Feature integration
+- Presentation
+- Documentation
+- Final project testing
+
+The Project Leader coordinated the overall development and integrated the individual modules into the final RailEase application.
+
+---
+
+# 🔀 Git & GitHub
+
+Git and GitHub were used for source-code management and collaboration.
+
+Repository:
+
+```text
+https://github.com/sayantan-hazra/railway_booking
+```
+
+General development workflow:
+
+```text
+Develop Module
+      ↓
+Test Module
+      ↓
+Git Commit
+      ↓
+Git Push
+      ↓
+GitHub
+      ↓
+Integration
+      ↓
+Final Testing
+```
+
+The main repository and overall Git/GitHub management are maintained by:
+
+**Sayantan Hazra (L)**
+
+---
+
+# 🎯 Project Objective
+
+The objective of RailEase is to demonstrate the development of a railway reservation system using fundamental web-development technologies.
+
+The project combines:
+
+- User authentication
+- Train searching
+- Coach management
+- Seat selection
+- Meal selection
+- Wallet payment
+- Ticket generation
+- PNR generation
+- Booking management
+- Customer support
+- Administrative management
+- MySQL database operations
+
+into a single web application.
+
+---
+
+# 🔮 Future Improvements
+
+Possible future improvements include:
+
+- 💳 Online payment gateway
+- 📧 Email ticket notifications
+- 📱 SMS notifications
+- 🔐 OTP verification
+- 🚆 Live train status
+- 🗺️ Real-time train tracking
+- 🎫 QR-code tickets
+- 👥 Multiple passengers per booking
+- ⏳ Waiting-list management
+- 🤖 Automatic seat allocation
+- 📊 Advanced admin analytics
+- 🔌 Railway API integration
+- ☁️ Cloud deployment
+
+---
+
+# ⚠️ Disclaimer
+
+RailEase is an **academic/college project** created for learning and demonstration purposes.
+
+It is **not affiliated with Indian Railways or IRCTC** and must not be used as an actual railway reservation service.
+
+All sample trains, stations, users, bookings, and other data are intended for development and demonstration purposes only.
+
+---
+
+# 👨‍💻 Development Team
+
+### 👑 Project Leader
+
+**Sayantan Hazra (L)**
+
+### Team Members
+
+- **Sayantan Hazra (L)** — Project Leader & Lead Developer
+- **Sayantan Pal** — Frontend & Booking Flow
+- **Sayan Sur** — Frontend & Booking Flow
+- **Saikat Jana** — Authentication & Manage Booking
+- **Rupankar Sarkar** — Profile, Wallet & Documentation
+- **Rupak Patra** — Support & Ticket Printout
+
+---
+
+# 🚆 RailEase
+
+### Search. Book. Manage. Travel.
+
+**A collaborative academic project led and coordinated by Sayantan Hazra (L).**
+```
+
+You can paste that **directly into `readme.md`** and commit/push it to your repository. Your current GitHub README is only about 146 lines, so this will give the repository a much more complete project-documentation and contribution section. :chatgpt-content-reference{index="1"}
