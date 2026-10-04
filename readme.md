@@ -1,5 +1,3 @@
-Yes. Replace the contents of your current `readme.md` with the following. I also corrected the setup references to match the repository structure you currently have, including `config/schema.sql` and `railway-booking`. [GitHub](https://github.com/sayantan-hazra/railway_booking/blob/main/readme.md)
-
 ```markdown
 # 🚆 RailEase - Railway Ticket Booking System
 
