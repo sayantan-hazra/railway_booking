@@ -84,6 +84,7 @@ textarea {
     sans-serif;
 }
 .auth-card .brand {
+  justify-content: center;
   margin-bottom: 56px;
 }
 .stack-form {
@@ -204,6 +205,9 @@ textarea:focus {
   padding: 28px 18px 20px;
   color: #bfdbfe;
   background: var(--navy);
+}
+.admin-sidebar .brand {
+  justify-content: center;
 }
 .sidebar-label {
   margin: 58px 12px 12px;

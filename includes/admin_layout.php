@@ -22,12 +22,12 @@ function admin_header(string $title, string $active = 'dashboard'): void
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title><?= htmlspecialchars($title) ?> | RailEase Admin</title>
-        <link rel="stylesheet" href="../assets/css/style.css">
+        <link rel="stylesheet" href="../assets/css/style.css?v=2">
     </head>
     <body class="admin-body">
         <div class="admin-layout">
             <aside class="admin-sidebar">
-                <a class="brand brand-light" href="dashboard.php"><img class="brand-logo" src="../assets/logo.png" alt="RailEase"></a>
+                <a class="brand brand-light" href="dashboard.php"><img class="brand-logo" src="../assets/blue_logo.png" alt="RailEase"></a>
                 <p class="sidebar-label">Workspace</p>
                 <nav class="admin-nav" aria-label="Admin navigation">
                     <?php foreach ($items as $key => [$label, $url]): ?>

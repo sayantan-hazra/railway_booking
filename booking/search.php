@@ -107,7 +107,7 @@ if ($searchSubmitted) {
     <header class="user-header">
         <div class="user-header-inner">
             <a href="../user/home.php" class="brand">
-                <img class="brand-logo" src="../assets/logo.png" alt="RailEase">
+                <img class="brand-logo" src="../assets/white_logo.png" alt="RailEase">
             </a>
             <div class="header-actions">
                 <a href="../user/wallet.php" class="header-action">

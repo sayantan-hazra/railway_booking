@@ -86,7 +86,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     <title>Login - RailEase</title>
 
     <link rel="stylesheet"
-          href="../assets/css/style.css">
+          href="../assets/css/style.css?v=2">
 
 </head>
 
@@ -95,7 +95,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 <main class="auth-card">
 
         <a class="brand" href="../index.php">
-            <img class="brand-logo" src="../assets/logo.png" alt="RailEase">
+            <img class="brand-logo" src="../assets/white_logo.png" alt="RailEase">
         </a>
 
         <p class="eyebrow">Passenger account</p>

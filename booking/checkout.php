@@ -111,6 +111,13 @@ $mealStatement->bind_param('i', $trainId);
 $mealStatement->execute();
 $mealOptions = $mealStatement->get_result()->fetch_all(MYSQLI_ASSOC);
 $mealStatement->close();
+
+$walletStatement = $conn->prepare('SELECT balance FROM wallets WHERE user_id = ? LIMIT 1');
+$walletStatement->bind_param('i', $loggedInUserId);
+$walletStatement->execute();
+$walletRow = $walletStatement->get_result()->fetch_assoc();
+$walletStatement->close();
+$walletBalance = $walletRow ? (float) $walletRow['balance'] : 0.0;
 ?>
 
 <!DOCTYPE html>
@@ -128,7 +135,7 @@ $mealStatement->close();
     <header class="user-header">
         <div class="user-header-inner">
             <a href="../user/home.php" class="brand">
-                <img class="brand-logo" src="../assets/logo.png" alt="RailEase">
+                <img class="brand-logo" src="../assets/white_logo.png" alt="RailEase">
             </a>
             <div class="header-actions">
                 <a href="../user/wallet.php" class="header-action"><span class="action-icon">₹</span><span class="action-text">Wallet</span></a>
@@ -237,6 +244,8 @@ $mealStatement->close();
                         </div>
                     </div>
 
+                    <div class="alert alert-error" id="paymentCancelledAlert" role="alert" style="display: none; margin-bottom: 14px;"></div>
+
                     <button type="submit" class="btn-confirm" id="btnSubmitPay">
                         Pay ₹<?php echo number_format($baseFare, 2); ?> & Book Ticket
                     </button>
@@ -272,6 +281,8 @@ $mealStatement->close();
     <script>
         const seatPrice = <?php echo (float) $trip['seat_price']; ?>;
         const passengerCount = <?php echo (int) $passengerCount; ?>;
+        const walletBalance = <?php echo json_encode($walletBalance); ?>;
+        let lastGrandTotal = 0;
 
         function calculateGrandTotal() {
             let ticketFare = 0;
@@ -290,6 +301,7 @@ $mealStatement->close();
             const totalInsuranceCost = insuranceChecked ? (0.45 * passengerCount) : 0;
 
             const grandTotal = ticketFare + totalMealCost + totalInsuranceCost;
+            lastGrandTotal = grandTotal;
             document.getElementById('baseTicketFareText').innerText = '₹' + ticketFare.toFixed(2);
 
             // Breakdown Update
@@ -321,6 +333,19 @@ $mealStatement->close();
         }
 
         document.addEventListener('DOMContentLoaded', calculateGrandTotal);
+
+        document.getElementById('bookingForm').addEventListener('submit', function (event) {
+            if (lastGrandTotal <= walletBalance) {
+                return;
+            }
+            event.preventDefault();
+            const alertBox = document.getElementById('paymentCancelledAlert');
+            alertBox.innerHTML = '<strong>Transaction Cancelled:</strong> your wallet balance (₹' +
+                walletBalance.toFixed(2) + ') is lower than the total payable (₹' + lastGrandTotal.toFixed(2) +
+                '). <a href="../user/wallet.php">Add money to your wallet</a> and try again.';
+            alertBox.style.display = 'block';
+            alertBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        });
     </script>
 </body>
 </html>

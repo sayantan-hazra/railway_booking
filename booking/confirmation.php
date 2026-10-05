@@ -97,6 +97,46 @@ foreach ($passengers as $passenger) {
 
 $insuranceFare = isset($_POST['travel_insurance']) ? 0.45 * count($seatIds) : 0;
 $totalFare = $ticketFare + $mealFare + $insuranceFare;
+
+$walletStatement = $conn->prepare('SELECT wallet_id, balance FROM wallets WHERE user_id = ? LIMIT 1');
+$walletStatement->bind_param('i', $userId);
+$walletStatement->execute();
+$walletRow = $walletStatement->get_result()->fetch_assoc();
+$walletStatement->close();
+$walletId = $walletRow ? (int) $walletRow['wallet_id'] : 0;
+$walletBalance = $walletRow ? (float) $walletRow['balance'] : 0.0;
+
+if ($walletBalance < $totalFare) {
+    ?>
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Transaction Cancelled - RailEase</title>
+        <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="../assets/css/style.css?v=<?php echo time(); ?>">
+    </head>
+    <body class="auth-page">
+        <main class="auth-card" style="text-align: center;">
+            <h1>Transaction Cancelled</h1>
+            <div class="alert alert-error">
+                <strong>Payment declined:</strong> your wallet balance is lower than the total payable amount.
+            </div>
+            <p class="muted">
+                Total payable: ₹<?php echo number_format($totalFare, 2); ?> &middot;
+                Wallet balance: ₹<?php echo number_format($walletBalance, 2); ?>
+            </p>
+            <a class="button button-primary" href="../user/wallet.php">Add Money to Wallet</a>
+            <br><br>
+            <a class="back-link" href="../booking/search.php">Start a New Search</a>
+        </main>
+    </body>
+    </html>
+    <?php
+    exit;
+}
+
 $firstMealId = (int) ($passengers[0]['meal_id'] ?? 0);
 $mealValue = $firstMealId > 0 ? $firstMealId : null;
 $pnr = 'RE' . mt_rand(10000000, 99999999);
@@ -148,6 +188,21 @@ try {
     }
     $passengerWithMealStatement->close();
     $passengerWithoutMealStatement->close();
+
+    $walletDeductStatement = $conn->prepare('UPDATE wallets SET balance = balance - ? WHERE user_id = ?');
+    $walletDeductStatement->bind_param('di', $totalFare, $userId);
+    $walletDeductStatement->execute();
+    $walletDeductStatement->close();
+
+    $walletTransactionStatement = $conn->prepare(
+        'INSERT INTO wallet_transactions (wallet_id, transaction_type, amount, description, booking_id)
+         VALUES (?, \'DEBIT\', ?, ?, ?)'
+    );
+    $transactionDescription = 'Payment for ticket booking #' . $bookingId;
+    $walletTransactionStatement->bind_param('idsi', $walletId, $totalFare, $transactionDescription, $bookingId);
+    $walletTransactionStatement->execute();
+    $walletTransactionStatement->close();
+
     $conn->commit();
 
     header('Location: confirmation.php?pnr=' . urlencode($pnr));

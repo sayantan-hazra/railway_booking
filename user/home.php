@@ -102,7 +102,7 @@ if ($stationResult) {
 
             <!-- RailEase Logo -->
             <a href="home.php" class="brand">
-                <img class="brand-logo" src="../assets/logo.png" alt="RailEase">
+                <img class="brand-logo" src="../assets/white_logo.png" alt="RailEase">
             </a>
 
             <!-- Header Actions -->
