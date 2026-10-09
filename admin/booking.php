@@ -1,12 +1,23 @@
 <?php
+/**
+ * Admin - Bookings management.
+ *
+ * Lists every booking in the system, lets an admin cancel a confirmed
+ * booking (POST action=cancel) and inspect a single booking's full
+ * details (?view=<id>) including its train timetable and passengers.
+ */
+
 require_once __DIR__ . '/../config/db.php';
 require_once __DIR__ . '/../includes/admin_layout.php';
 
+// Flash messages rendered at the top of the page.
 $message = '';
 $error = '';
 
+// Handle the "Cancel booking" action submitted from the overview table.
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'cancel') {
     $booking_id = (int) ($_POST['booking_id'] ?? 0);
+    // Only CONFIRMED bookings can be cancelled; affected_rows guards against double submits.
     $statement = $conn->prepare("UPDATE bookings SET status = 'CANCELLED' WHERE booking_id = ? AND status = 'CONFIRMED'");
     $statement->bind_param('i', $booking_id);
 
@@ -17,9 +28,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'cance
     }
 }
 
+// Every booking (newest first) for the overview table.
 $bookings = admin_query($conn, 'SELECT b.booking_id, b.pnr, u.full_name, t.train_number, t.train_name, b.travel_date, b.total_amount, b.status FROM bookings b LEFT JOIN users u ON u.user_id = b.user_id LEFT JOIN trains t ON t.train_id = b.train_id ORDER BY b.booked_at DESC');
 $viewing = null;
 
+// ?view=<id> - a specific booking was opened: load its full details.
 if (isset($_GET['view'])) {
     $viewId = (int) $_GET['view'];
     $viewStatement = $conn->prepare(
@@ -40,6 +53,7 @@ if (isset($_GET['view'])) {
     $viewStatement->close();
 
     if ($viewing) {
+        // Timetable of the booked train, in stop order.
         $routeStatement = $conn->prepare(
             'SELECT s.station_name, s.station_code, ts.arrival_time, ts.departure_time
              FROM train_stops ts
@@ -52,6 +66,7 @@ if (isset($_GET['view'])) {
         $viewing['route'] = $routeStatement->get_result()->fetch_all(MYSQLI_ASSOC);
         $routeStatement->close();
 
+        // Passenger rows for this booking with their assigned seat and chosen meal.
         $passengerStatement = $conn->prepare(
             'SELECT bp.passenger_name, bp.age, bp.gender, s.seat_number, s.seat_type, m.meal_name
              FROM booking_passengers bp
@@ -70,9 +85,11 @@ if (isset($_GET['view'])) {
 admin_header('Bookings', 'bookings');
 ?>
 
+<!-- Flash messages (feedback after cancelling a booking) -->
 <?php if ($message !== ''): ?><div class="alert alert-success"><?= htmlspecialchars($message) ?></div><?php endif; ?>
 <?php if ($error !== ''): ?><div class="alert alert-error"><?= htmlspecialchars($error) ?></div><?php endif; ?>
 
+<!-- Bookings overview table -->
 <section class="panel">
     <div class="panel-heading">
         <h2>All bookings</h2>
@@ -94,6 +111,7 @@ if ($bookings && $bookings->num_rows > 0):
 </thead>
 <tbody>
     <?php 
+    // Render one table row per booking.
     while ($booking = $bookings->fetch_assoc()): ?>
     <tr><td><strong><?= htmlspecialchars($booking['pnr']) ?></strong></td><td>
         <?= htmlspecialchars($booking['full_name'] ?? 'Unknown') ?>
@@ -122,6 +140,7 @@ if ($bookings && $bookings->num_rows > 0):
         </td></tr><?php endwhile; ?></tbody></table></div><?php else: ?><div class="empty-state">No bookings have been made yet.</div><?php endif; ?>
 </section>
 
+<!-- Details panel for the booking opened via ?view=<id> -->
 <?php if ($viewing): ?>
 <section class="panel booking-details-panel">
     <div class="panel-heading">
@@ -143,6 +162,7 @@ if ($bookings && $bookings->num_rows > 0):
         <div><span class="muted">Status</span><strong><?= htmlspecialchars($viewing['status']) ?></strong></div>
     </div>
 
+    <!-- Timetable of the booked train, in stop order -->
     <h3 class="booking-details-heading">Train timetable</h3>
     <?php if ($viewing['route']): ?>
         <div class="table-wrap"><table class="data-table"><thead><tr><th>Stop</th><th>Arrival</th><th>Departure</th></tr></thead><tbody>
@@ -152,6 +172,7 @@ if ($bookings && $bookings->num_rows > 0):
         </tbody></table></div>
     <?php else: ?><p class="muted">No timetable stops recorded.</p><?php endif; ?>
 
+    <!-- Passengers on this booking, with seat number and meal -->
     <h3 class="booking-details-heading">Passengers</h3>
     <?php if ($viewing['passengers']): ?>
         <div class="table-wrap"><table class="data-table"><thead><tr><th>Name</th><th>Age</th><th>Gender</th><th>Seat</th><th>Food</th></tr></thead><tbody>

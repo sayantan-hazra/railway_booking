@@ -1,22 +1,35 @@
 <?php
+/**
+ * Admin - Support tickets.
+ *
+ * Lists every customer support request (with the customer's name and the
+ * related booking PNR) and lets an admin write a reply and move a ticket
+ * between statuses. Saving a reply on an OPEN ticket auto-resolves it.
+ */
+
 require_once __DIR__ . '/../config/db.php';
 require_once __DIR__ . '/../includes/admin_layout.php';
 
+// Flash messages rendered at the top of the page.
 $message = '';
 $error = '';
 
+// Handle the per-ticket "Save response" form submission.
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'update') {
     $ticketId = (int) ($_POST['ticket_id'] ?? 0);
     $status = $_POST['status'] ?? 'OPEN';
     $adminReply = trim($_POST['admin_reply'] ?? '');
+    // Only these ticket statuses may be stored.
     $allowedStatuses = ['OPEN', 'IN_PROGRESS', 'RESOLVED'];
 
     if (!in_array($status, $allowedStatuses, true)) {
         $error = 'Invalid support status.';
     } else {
+        // Replying to an OPEN ticket automatically resolves it.
         if ($adminReply !== '' && $status === 'OPEN') {
             $status = 'RESOLVED';
         }
+        // Resolved tickets stamp resolved_at; any other status clears it.
         if ($status === 'RESOLVED') {
             $statement = $conn->prepare(
                 'UPDATE support_tickets SET status = ?, admin_reply = ?, resolved_at = CURRENT_TIMESTAMP WHERE ticket_id = ?'
@@ -37,14 +50,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'updat
     }
 }
 
+// All tickets (newest first) with the customer's name and booking PNR.
 $tickets = admin_query($conn, 'SELECT s.ticket_id, s.subject, s.message, s.admin_reply, s.status, s.created_at, s.resolved_at, u.full_name, b.pnr FROM support_tickets s LEFT JOIN users u ON u.user_id = s.user_id LEFT JOIN bookings b ON b.booking_id = s.booking_id ORDER BY s.created_at DESC');
 
 admin_header('Support', 'support');
 ?>
 
+<!-- Flash messages -->
 <?php if ($message !== ''): ?><div class="alert alert-success"><?= htmlspecialchars($message) ?></div><?php endif; ?>
 <?php if ($error !== ''): ?><div class="alert alert-error"><?= htmlspecialchars($error) ?></div><?php endif; ?>
 
+<!-- Support tickets table -->
 <section class="panel">
     <div class="panel-heading">
         <h2>Support requests</h2>
@@ -64,17 +80,22 @@ admin_header('Support', 'support');
             </tr>
         </thead>
         <tbody>
-            <?php while ($ticket = $tickets->fetch_assoc()): ?>
+            <?php
+            // Render one row per ticket with its reply/status form.
+            while ($ticket = $tickets->fetch_assoc()): ?>
                 <tr><td>
                     <strong><?= htmlspecialchars($ticket['subject']) ?></strong>
                 </td><td>
                     <?= htmlspecialchars($ticket['full_name'] ?? 'Unknown') ?>
                 </td><td>
+                    <?php /* Truncate long customer messages to 70 characters. */ ?>
                     <?= htmlspecialchars(strlen($ticket['message']) > 70 ? substr($ticket['message'], 0, 70) . '...' : $ticket['message']) ?>
                 </td><td>
+                    <!-- Inline reply + status form, one per ticket row -->
                     <form method="post" class="stack-form">
                         <input type="hidden" name="action" value="update">
                         <input type="hidden" name="ticket_id" value="<?= (int) $ticket['ticket_id'] ?>">
+                        <?php /* Status dropdown; values match the whitelist above. */ ?>
                         <select name="status" aria-label="Ticket status">
                             <?php foreach (['OPEN', 'IN_PROGRESS', 'RESOLVED'] as $status): ?>
                                 <option value="<?= $status ?>" <?= $ticket['status'] === $status ? 'selected' : '' ?>><?= $status ?></option>
@@ -85,6 +106,7 @@ admin_header('Support', 'support');
                     </form>
                 </td>
                 <td>
+                    <?php /* Received date, e.g. "09 Oct 2026". */ ?>
                     <?= htmlspecialchars(date('d M Y', strtotime($ticket['created_at']))) ?>
                 </td>
             </tr>

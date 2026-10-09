@@ -1,13 +1,28 @@
 <?php
+/**
+ * Admin - Train management (add / edit / delete + details view).
+ *
+ * A train owns three kinds of related rows that this page maintains
+ * together: the train record itself, its ordered route stops
+ * (train_stops: origin, via stations and destination, each with arrival
+ * and departure times) and the meals offered on board (train_meals).
+ * Routes and meals are rebuilt from the submitted form data on every
+ * add/update, so the form is the single source of truth.
+ */
 
 require_once __DIR__ . '/../config/db.php';
 require_once __DIR__ . '/../includes/admin_layout.php';
 
+// Flash messages, the train being edited (?edit=<id>) and the train being viewed (?view=<id>).
 $message = '';
 $error = '';
 $editing = null;
 $viewing = null;
+// Rebuilds a train's meal assignments (train_meals) and ordered route stops
+// (train_stops) from the submitted form data: existing rows are deleted and
+// re-inserted, so the form is the single source of truth for both.
 $syncTrainDetails = static function (mysqli $conn, int $trainId, int $fromStationId, int $toStationId, array $viaStationIds, array $mealIds, string $fromArrival, string $fromDeparture, string $toArrival, string $toDeparture, array $viaArrivals, array $viaDepartures): bool {
+	// 1) Replace the meal assignments for this train.
 	$deleteMeals = $conn->prepare('DELETE FROM train_meals WHERE train_id = ?');
 	$deleteMeals->bind_param('i', $trainId);
 	$deleteMeals->execute();
@@ -23,6 +38,7 @@ $syncTrainDetails = static function (mysqli $conn, int $trainId, int $fromStatio
 	}
 	$mealStatement->close();
 
+	// 2) Replace the route: origin first, then via stations, then destination.
 	$deleteStops = $conn->prepare('DELETE FROM train_stops WHERE train_id = ?');
 	$deleteStops->bind_param('i', $trainId);
 	$deleteStops->execute();
@@ -40,6 +56,7 @@ $syncTrainDetails = static function (mysqli $conn, int $trainId, int $fromStatio
 		];
 	}
 	$routeStops[] = ['id' => $toStationId, 'arrival' => $toArrival, 'departure' => $toDeparture];
+	// Insert every stop with an increasing stop_order (1 = origin); empty times are stored as NULL.
 	$stopOrder = 1;
 	$stopsSaved = true;
 	foreach ($routeStops as $stop) {
@@ -55,12 +72,15 @@ $syncTrainDetails = static function (mysqli $conn, int $trainId, int $fromStatio
 	return $stopsSaved;
 };
 
+// Handle add / update / delete form submissions.
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 	$action = $_POST['action'] ?? '';
+	// Basic form fields: train identity, endpoints and their times.
 	$train_number = trim($_POST['train_number'] ?? '');
 	$train_name = trim($_POST['train_name'] ?? '');
 	$from_station_id = (int) ($_POST['from_station_id'] ?? 0);
 	$to_station_id = (int) ($_POST['to_station_id'] ?? 0);
+	// Via stations: cast to ints, drop empties/duplicates and re-index.
 	$via_station_ids = array_values(array_unique(array_filter(array_map('intval', $_POST['via_station_ids'] ?? []))));
 	$from_arrival = trim($_POST['from_arrival'] ?? '');
 	$from_departure = trim($_POST['from_departure'] ?? '');
@@ -68,8 +88,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 	$to_departure = trim($_POST['to_departure'] ?? '');
 	$via_arrivals = $_POST['via_arrival'] ?? [];
 	$via_departures = $_POST['via_departure'] ?? [];
+	// Selected meals for this train (zero ids dropped).
 	$meal_ids = array_values(array_filter(array_map('intval', $_POST['meal_ids'] ?? [])));
 
+	// Delete: refuse while bookings reference the train; otherwise remove its
+	// seats, coaches, stops and the train itself in one transaction.
 	if ($action === 'delete') {
 		$train_id = (int) ($_POST['train_id'] ?? 0);
 		$usageStatement = $conn->prepare('SELECT COUNT(*) AS total FROM bookings WHERE train_id = ?');
@@ -111,23 +134,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 				$error = 'This train could not be deleted because it is still in use.';
 			}
 		}
+	// Validation: identity required, origin and destination must differ, and
+	// neither endpoint may also appear as a via station.
 	} elseif ($train_number === '' || $train_name === '' || $from_station_id <= 0 || $to_station_id <= 0 || $from_station_id === $to_station_id || in_array($from_station_id, $via_station_ids, true) || in_array($to_station_id, $via_station_ids, true)) {
 		$error = 'Train number, train name, different origin and destination stations are required.';
+	// Update the train record, then rebuild its route and meals.
 	} elseif ($action === 'update') {
 		$train_id = (int) ($_POST['train_id'] ?? 0);
 		$statement = $conn->prepare('UPDATE trains SET train_number = ?, train_name = ? WHERE train_id = ?');
 		$statement->bind_param('ssi', $train_number, $train_name, $train_id);
 		$message = $statement->execute() && $syncTrainDetails($conn, $train_id, $from_station_id, $to_station_id, $via_station_ids, $meal_ids, $from_arrival, $from_departure, $to_arrival, $to_departure, $via_arrivals, $via_departures)
 			? 'Train updated successfully.' : 'Could not update that train.';
+		// 1062 = duplicate train number (unique index).
 		if ($statement->errno === 1062) {
 			$error = 'That train number already exists.';
 			$message = '';
 		}
 	} else {
+		// Insert the train, then build its route and meals with the new id.
 		$statement = $conn->prepare('INSERT INTO trains (train_number, train_name) VALUES (?, ?)');
 		$statement->bind_param('ss', $train_number, $train_name);
 		$message = $statement->execute() && $syncTrainDetails($conn, $conn->insert_id, $from_station_id, $to_station_id, $via_station_ids, $meal_ids, $from_arrival, $from_departure, $to_arrival, $to_departure, $via_arrivals, $via_departures)
 			? 'Train added successfully.' : 'Could not add that train.';
+		// 1062 = duplicate train number (unique index).
 		if ($statement->errno === 1062) {
 			$error = 'That train number already exists.';
 			$message = '';
@@ -135,6 +164,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 	}
 }
 
+// ?edit=<id> - load the train plus its existing route and meals into the form.
 if (isset($_GET['edit'])) {
 	$train_id = (int) $_GET['edit'];
 	$statement = $conn->prepare('SELECT train_id, train_number, train_name FROM trains WHERE train_id = ?');
@@ -151,6 +181,7 @@ if (isset($_GET['edit'])) {
 		$routeStatement->execute();
 		$route = $routeStatement->get_result()->fetch_all(MYSQLI_ASSOC);
 		$routeStatement->close();
+		// First stop = origin, last = destination, everything between = via stations.
 		$routeStationIds = array_map(static fn (array $stop): int => (int) $stop['station_id'], $route);
 		$editing['from_station_id'] = $routeStationIds[0] ?? 0;
 		$editing['to_station_id'] = $routeStationIds[count($routeStationIds) - 1] ?? 0;
@@ -168,6 +199,7 @@ if (isset($_GET['edit'])) {
 			? array_column(array_slice($route, 1, -1), 'departure_time')
 			: [];
 
+		// Meal ids currently assigned to this train.
 		$mealStatement = $conn->prepare('SELECT meal_id FROM train_meals WHERE train_id = ?');
 		$mealStatement->bind_param('i', $train_id);
 		$mealStatement->execute();
@@ -179,6 +211,7 @@ if (isset($_GET['edit'])) {
 	}
 }
 
+// ?view=<id> - read-only details view of a single train.
 if (isset($_GET['view'])) {
 	$viewId = (int) $_GET['view'];
 	$viewStatement = $conn->prepare('SELECT train_id, train_number, train_name FROM trains WHERE train_id = ?');
@@ -188,6 +221,7 @@ if (isset($_GET['view'])) {
 	$viewStatement->close();
 
 	if ($viewing) {
+		// Full route with station names, in stop order.
 		$routeStatement = $conn->prepare(
 			'SELECT s.station_name, s.station_code, s.city, ts.arrival_time, ts.departure_time
 			 FROM train_stops ts
@@ -200,6 +234,7 @@ if (isset($_GET['view'])) {
 		$viewing['route'] = $routeStatement->get_result()->fetch_all(MYSQLI_ASSOC);
 		$routeStatement->close();
 
+		// Meals offered on this train.
 		$mealStatement = $conn->prepare(
 			'SELECT m.meal_name, m.price
 			 FROM train_meals tm
@@ -214,10 +249,12 @@ if (isset($_GET['view'])) {
 	}
 }
 
+// Station and meal options used to build the form dropdowns.
 $stations = admin_query($conn, 'SELECT station_id, station_code, station_name, city FROM stations ORDER BY station_name');
 $meals = admin_query($conn, 'SELECT meal_id, meal_name, price FROM meals ORDER BY meal_name');
 $stationOptions = $stations ? $stations->fetch_all(MYSQLI_ASSOC) : [];
 $mealOptions = $meals ? $meals->fetch_all(MYSQLI_ASSOC) : [];
+// Directory listing: each train with a condensed "CODE arr/dep -> ..." timetable built via GROUP_CONCAT.
 	$trains = admin_query($conn, "SELECT t.train_id, t.train_number, t.train_name,
 	GROUP_CONCAT(CONCAT(s.station_code, ' ', COALESCE(DATE_FORMAT(ts.arrival_time, '%H:%i'), '--:--'), '/', COALESCE(DATE_FORMAT(ts.departure_time, '%H:%i'), '--:--')) ORDER BY ts.stop_order SEPARATOR ' -> ') AS timetable
 	FROM trains t
@@ -227,8 +264,10 @@ $mealOptions = $meals ? $meals->fetch_all(MYSQLI_ASSOC) : [];
 	ORDER BY t.train_id DESC");
 admin_header('Trains', 'trains');
 ?>
+<!-- Flash messages -->
 <?php if ($message !== ''): ?><div class="alert alert-success"><?= htmlspecialchars($message) ?></div><?php endif; ?>
 <?php if ($error !== ''): ?><div class="alert alert-error"><?= htmlspecialchars($error) ?></div><?php endif; ?>
+<!-- Read-only details of the train opened via ?view=<id> -->
 <?php if ($viewing): ?>
 <section class="panel" style="margin-bottom:20px">
 	<div class="panel-heading">
@@ -242,6 +281,7 @@ admin_header('Trains', 'trains');
 	</div>
 </section>
 <?php endif; ?>
+<!-- Add / edit train form: identity, route with times, via stations and meals -->
 <section class="panel" style="margin-bottom:20px">
 	<div class="panel-heading"><h2><?= $editing ? 'Edit train' : 'Add a train' ?></h2><?php if ($editing): ?><a class="text-link" href="trains.php">Cancel edit</a><?php endif; ?></div>
 	<form method="post">
@@ -280,6 +320,7 @@ admin_header('Trains', 'trains');
 			</div>
 			<div>
 				<label for="via_station_ids">Sub-stations</label>
+				<!-- Repeatable via-station rows: station + arrival/departure times -->
 				<div id="via-station-fields">
 					<?php $viaValues = $editing['via_station_ids'] ?? [0]; foreach ($viaValues as $viaIndex => $selectedVia): ?>
 						<div class="repeatable-row">
@@ -299,7 +340,8 @@ admin_header('Trains', 'trains');
 			</div>
 			<div>
 				<label for="meal_ids">Meals available on this train</label>
-				<div id="meal-fields">
+					<!-- Repeatable meal selection rows -->
+					<div id="meal-fields">
 					<?php $mealValues = $editing['meal_ids'] ?? [0]; foreach ($mealValues as $selectedMeal): ?>
 						<div class="repeatable-row">
 							<select name="meal_ids[]">
@@ -315,10 +357,12 @@ admin_header('Trains', 'trains');
 				<button type="button" class="button button-muted" id="add-meal">Add meal</button>
 			</div>
 		</div>
+		<!-- Hidden fields switch this form from "add" to "update" mode. -->
 		<?php if ($editing): ?><input type="hidden" name="action" value="update"><input type="hidden" name="train_id" value="<?= (int) $editing['train_id'] ?>"><?php endif; ?>
 		<div class="form-actions"><button class="button button-primary" type="submit"><?= $editing ? 'Save changes' : 'Add train' ?></button></div>
 	</form>
 </section>
+<!-- Train directory table -->
 <section class="panel">
 	<div class="panel-heading"><h2>Train directory</h2><span class="muted"><?= $trains ? $trains->num_rows : 0 ?> records</span></div>
 	<?php if ($trains && $trains->num_rows > 0): ?><div class="table-wrap"><table class="data-table"><thead><tr><th>Number</th><th>Train name</th><th>Actions</th></tr></thead><tbody>
@@ -326,6 +370,9 @@ admin_header('Trains', 'trains');
 	</tbody></table></div><?php else: ?><div class="empty-state">Your train directory is empty.</div><?php endif; ?>
 </section>
 <script>
+	// Wires up a repeatable-rows control: "Add" clones the first row (cleared),
+	// "Remove" deletes a row - or clears it when it is the last one left, so at
+	// least one empty row always stays available.
 	function setupRepeatableFields(containerId, addButtonId) {
 		const container = document.getElementById(containerId);
 		const addButton = document.getElementById(addButtonId);
@@ -350,6 +397,7 @@ admin_header('Trains', 'trains');
 		});
 	}
 
+	// Apply the repeatable behaviour to the via-station and meal row groups.
 	setupRepeatableFields('via-station-fields', 'add-via-station');
 	setupRepeatableFields('meal-fields', 'add-meal');
 </script>

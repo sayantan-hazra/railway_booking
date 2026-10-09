@@ -1,12 +1,21 @@
 <?php
+/**
+ * Admin - Coach management (add / edit / delete).
+ *
+ * A coach belongs to a train and carries a coach type (2S, SL, 3A, 2A),
+ * a coach number and a seat price. Deletion is refused while any booking
+ * still references the coach or one of its seats.
+ */
 
 require_once __DIR__ . '/../config/db.php';
 require_once __DIR__ . '/../includes/admin_layout.php';
 
+// Flash messages and the coach currently being edited (null = add mode).
 $message = '';
 $error = '';
 $editing = null;
 
+// Handle add / update / delete form submissions.
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 	$action = $_POST['action'] ?? '';
 	$coach_id = (int) ($_POST['coach_id'] ?? 0);
@@ -15,6 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 	$coach_number = trim($_POST['coach_number'] ?? '');
 	$seat_price = (float) ($_POST['seat_price'] ?? 0);
 
+	// Delete: refuse while a booking still references this coach or one of its seats.
 	if ($action === 'delete') {
 		$usageStatement = $conn->prepare(
 			'SELECT COUNT(*) AS total
@@ -31,6 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 			$error = 'This coach cannot be deleted because it is referenced by a booking.';
 		} else {
 			try {
+				// Remove the coach's seats first, then the coach itself, in one transaction.
 				$conn->begin_transaction();
 				$seatStatement = $conn->prepare('DELETE FROM seats WHERE coach_id = ?');
 				$seatStatement->bind_param('i', $coach_id);
@@ -48,8 +59,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 				$error = 'This coach could not be deleted because it is still in use.';
 			}
 		}
+	// Shared validation for add/update: train, coach type, coach number and a price are required.
 	} elseif ($train_id <= 0 || $coach_type === '' || $coach_number === '') {
 		$error = 'Train, coach type, coach number, and a valid seat price are required.';
+	// Update the existing coach identified by coach_id.
 	} elseif ($action === 'update') {
 		$statement = $conn->prepare(
 			'UPDATE coaches SET train_id = ?, coach_type = ?, coach_number = ?, seat_price = ? WHERE coach_id = ?'
@@ -62,6 +75,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 			$error = 'Could not update the coach.';
 		}
 	} else {
+		// No action given - insert a brand-new coach.
 		$statement = $conn->prepare(
 			'INSERT INTO coaches (train_id, coach_type, coach_number, seat_price) VALUES (?, ?, ?, ?)'
 		);
@@ -75,6 +89,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 	}
 }
 
+// ?edit=<id> - load the coach being edited so the form shows its current values.
 if (isset($_GET['edit'])) {
 	$coach_id = (int) $_GET['edit'];
 	$statement = $conn->prepare(
@@ -85,6 +100,7 @@ if (isset($_GET['edit'])) {
 	$editing = $statement->get_result()->fetch_assoc();
 }
 
+// Trains for the parent-train dropdown and all coaches for the directory table.
 $trains = admin_query($conn, 'SELECT train_id, train_number, train_name FROM trains ORDER BY train_number');
 $coaches = admin_query(
 	$conn,
@@ -97,6 +113,7 @@ $coaches = admin_query(
 admin_header('Coaches', 'coaches');
 ?>
 
+<!-- Flash messages -->
 <?php if ($message !== ''): ?>
 	<div class="alert alert-success"><?= htmlspecialchars($message) ?></div>
 <?php endif; ?>
@@ -105,6 +122,7 @@ admin_header('Coaches', 'coaches');
 	<div class="alert alert-error"><?= htmlspecialchars($error) ?></div>
 <?php endif; ?>
 
+<!-- Add / edit coach form (doubles as the edit form when ?edit=<id> is set) -->
 <section class="panel" style="margin-bottom: 20px">
 	<div class="panel-heading">
 		<h2><?= $editing ? 'Edit coach' : 'Add a coach' ?></h2>
@@ -144,6 +162,7 @@ admin_header('Coaches', 'coaches');
 				</div>
 			</div>
 
+			<!-- Hidden fields switch this form from "add" to "update" mode. -->
 			<?php if ($editing): ?>
 				<input type="hidden" name="action" value="update">
 				<input type="hidden" name="coach_id" value="<?= (int) $editing['coach_id'] ?>">
@@ -158,6 +177,7 @@ admin_header('Coaches', 'coaches');
 	<?php endif; ?>
 </section>
 
+<!-- Coach directory table -->
 <section class="panel">
 	<div class="panel-heading">
 		<h2>Coach directory</h2>

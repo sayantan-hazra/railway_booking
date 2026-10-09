@@ -1,19 +1,29 @@
 <?php
+/**
+ * Admin - Dashboard.
+ *
+ * Landing page of the admin panel: headline counters for users, trains,
+ * bookings and support tickets, plus the five most recent bookings and
+ * the five most recently added trains.
+ */
 
 require_once __DIR__ . '/../config/db.php';
 require_once __DIR__ . '/../includes/admin_layout.php';
 
+// Row counts for the four stat cards.
 $stats = [
 	'users' => admin_count($conn, 'users'),
 	'trains' => admin_count($conn, 'trains'),
 	'bookings' => admin_count($conn, 'bookings'),
 	'support_tickets' => admin_count($conn, 'support_tickets'),
 ];
+// Last 5 bookings and last 5 added trains for the panels below.
 $recent_trains = admin_query($conn, 'SELECT train_id, train_number, train_name FROM trains ORDER BY train_id DESC LIMIT 5');
 $recent_bookings = admin_query($conn, 'SELECT pnr, travel_date, total_amount, status FROM bookings ORDER BY booked_at DESC LIMIT 5');
 
 admin_header('Dashboard', 'dashboard');
 ?>
+<!-- Stat cards: users, trains, bookings, support tickets -->
 <section class="stats-grid">
 	<article class="stat-card"><span class="stat-icon">U</span><p>Total users</p><strong><?= $stats['users'] ?></strong></article>
 	<article class="stat-card"><span class="stat-icon">T</span><p>Active trains</p><strong><?= $stats['trains'] ?></strong></article>
@@ -21,6 +31,7 @@ admin_header('Dashboard', 'dashboard');
 	<article class="stat-card"><span class="stat-icon">?</span><p>Support requests</p><strong><?= $stats['support_tickets'] ?></strong></article>
 </section>
 
+<!-- Recent bookings and train inventory panels -->
 <section class="dashboard-grid">
 	<article class="panel">
 		<div class="panel-heading"><h2>Recent bookings</h2><a class="text-link" href="booking.php">View all</a></div>
